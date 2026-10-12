@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>方案 3：節點連成的大腦</title>
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="#FEFCF1"/>
+  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.75" fill="none" stroke="#E2D9C3" stroke-width="0.5"/>
+  <path d="M31 13.5 C27 10 20.5 11 18.5 16 C12.5 16 9.5 22 12 26.5 C8 30 8.5 37.5 13.5 40 C13 46 18.5 50.5 24 49 C26.5 52.5 30 52.5 32 50.5 C34 52.5 37.5 52.5 40 49 C45.5 50.5 51 46 50.5 40 C55.5 37.5 56 30 52 26.5 C54.5 22 51.5 16 45.5 16 C43.5 11 37 10 33 13.5 Z" fill="#8DC8FA" stroke="#231413" stroke-width="2.7" stroke-linejoin="round"/>
+  <path d="M32 14 V50" stroke="#231413" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+  <path d="M21 24 L32 32 L43 24 M21 24 L23 39 L32 32 L41 40 L43 24" fill="none" stroke="#231413" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="21" cy="24" r="3.6" fill="#D8B64D" stroke="#231413" stroke-width="2.2"/>
+  <circle cx="43" cy="24" r="3.6" fill="#D8B64D" stroke="#231413" stroke-width="2.2"/>
+  <circle cx="23" cy="39" r="3.6" fill="#D8B64D" stroke="#231413" stroke-width="2.2"/>
+  <circle cx="41" cy="40" r="3.6" fill="#D8B64D" stroke="#231413" stroke-width="2.2"/>
+  <circle cx="32" cy="32" r="4.6" fill="#FEFCF1" stroke="#231413" stroke-width="2.4"/>
+</svg>

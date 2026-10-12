@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><title>鳶尾節點樹 · Fleur de nœuds</title>
+<rect width="64" height="64" rx="14" fill="#1F2730"/>
+<rect x="3.5" y="3.5" width="57" height="57" rx="11" fill="none" stroke="#B8954A" stroke-opacity=".45" stroke-width="1"/>
+<g fill="none" stroke="#D2B06A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<path d="M32 17v29"/><path d="M32 30c-3-8-11-10-15-5"/><path d="M32 30c3-8 11-10 15-5"/><path d="M22 42h20"/><path d="M27 46l5 5 5-5"/>
+</g>
+<g fill="#D2B06A"><circle cx="32" cy="13.5" r="4.6"/><circle cx="15" cy="27.5" r="3.8"/><circle cx="49" cy="27.5" r="3.8"/></g>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><title>紋章心智圖 · Écu</title>
+<rect width="64" height="64" rx="14" fill="#F5EFE2"/>
+<path d="M32 6.5l20 6v15c0 13-8.5 22.5-20 30-11.5-7.5-20-17-20-30v-15z" fill="#FBF7EE" stroke="#B8954A" stroke-width="3" stroke-linejoin="round"/>
+<g fill="none" stroke="#2E3D55" stroke-width="2.6" stroke-linecap="round"><path d="M32 29L21 21M32 29l11-8M32 29v13"/></g>
+<g fill="#2E3D55"><circle cx="32" cy="29" r="5"/><circle cx="20" cy="20.5" r="3.4"/><circle cx="44" cy="20.5" r="3.4"/><circle cx="32" cy="44" r="3.4"/></g>
+<circle cx="32" cy="29" r="1.9" fill="#D2B06A"/>
+</svg>

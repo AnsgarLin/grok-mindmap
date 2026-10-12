@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>方案 1：卡片心智圖</title>
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="#FEFCF1"/>
+  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.75" fill="none" stroke="#E2D9C3" stroke-width="0.5"/>
+  <path d="M27 32 H33 V18.5 H38 M33 32 V45.5 H38" fill="none" stroke="#231413" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="9" y="23" width="18" height="18" rx="5" fill="#8DC8FA" stroke="#231413" stroke-width="2.7"/>
+  <rect x="38" y="12" width="17" height="13" rx="4.5" fill="#8DC8FA" stroke="#231413" stroke-width="2.7"/>
+  <rect x="38" y="39" width="17" height="13" rx="4.5" fill="#8DC8FA" stroke="#231413" stroke-width="2.7"/>
+  <circle cx="33" cy="32" r="4.5" fill="#D8B64D" stroke="#231413" stroke-width="2.5"/>
+</svg>

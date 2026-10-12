@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>方案 4：對話卡片以箭頭相連</title>
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="#FEFCF1"/>
+  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.75" fill="none" stroke="#E2D9C3" stroke-width="0.5"/>
+  <path d="M10 15 a5 5 0 0 1 5 -5 h18 a5 5 0 0 1 5 5 v9 a5 5 0 0 1 -5 5 h-13 l-6 5 v-5 a5 5 0 0 1 -4 -5 Z" fill="#8DC8FA" stroke="#231413" stroke-width="2.7" stroke-linejoin="round"/>
+  <path d="M16 17 h15 M16 22.5 h9" stroke="#231413" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M38 19.5 H46.5 V33" fill="none" stroke="#231413" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M41.5 31 L46.5 37.5 L51.5 31 Z" fill="#231413" stroke="#231413" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="31" y="38" width="23" height="16" rx="5" fill="#D8B64D" stroke="#231413" stroke-width="2.7"/>
+  <path d="M36.5 44 h12 M36.5 48.5 h7" stroke="#231413" stroke-width="2.6" stroke-linecap="round"/>
+</svg>

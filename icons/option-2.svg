@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>方案 2：書本長出知識樹</title>
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="#FEFCF1"/>
+  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.75" fill="none" stroke="#E2D9C3" stroke-width="0.5"/>
+  <path d="M32 37 V24 M32 30 L20.5 20.5 M32 30 L43.5 20.5" fill="none" stroke="#231413" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="19" cy="19" r="5" fill="#D8B64D" stroke="#231413" stroke-width="2.5"/>
+  <circle cx="45" cy="19" r="5" fill="#D8B64D" stroke="#231413" stroke-width="2.5"/>
+  <circle cx="32" cy="16" r="5.5" fill="#D8B64D" stroke="#231413" stroke-width="2.5"/>
+  <path d="M32 40 C26 36.5 18 36 10 37.5 V51 C18 49.5 26 50 32 53.5 Z" fill="#8DC8FA" stroke="#231413" stroke-width="2.7" stroke-linejoin="round"/>
+  <path d="M32 40 C38 36.5 46 36 54 37.5 V51 C46 49.5 38 50 32 53.5 Z" fill="#8DC8FA" stroke="#231413" stroke-width="2.7" stroke-linejoin="round"/>
+</svg>
