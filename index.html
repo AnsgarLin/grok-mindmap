@@ -638,6 +638,10 @@
   .card .kind-pick button { border: 0; background: none; border-radius: 999px; padding: 2px 8px; font-size: 11.5px; line-height: 16px; color: var(--muted, #7a776f); display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
   .card .kind-pick button.on { background: var(--navy, #2B3A55); color: #fff; }
   .card .kind-pick button:not(.on):hover { background: var(--gold-wash, #f6efdc); color: var(--navy, #2B3A55); }
+  .choice-modal { width: min(440px, 92vw); }
+  .choice-modal .choice-text { margin: 0 0 18px; line-height: 1.75; color: var(--ink, #2B2F35); font-family: var(--f-serif); font-size: 14px; }
+  .choice-row { display: flex; flex-direction: column; gap: 8px; }
+  .choice-row .tb-btn { justify-content: center; width: 100%; padding: 9px 12px; }
 </style>
 </head>
 <body>
@@ -1408,7 +1412,8 @@ const stacks = () => undoStacks[state.currentKbId] || (undoStacks[state.currentK
 const GEO_KEYS = ['kind', 'x', 'y', 'w', 'h', 'collapsed', 'color', 'parentId', 'sourceFollowUp', 'parentSide', 'childSide', 'edgeColor'];
 function snapKb() { const kbId = state.currentKbId;
   return JSON.stringify({ kbId, cards: Object.values(state.cards).filter(c => c.kbId === kbId), links: state.links.filter(l => l.kbId === kbId), groups: state.groups.filter(g => g.kbId === kbId) }); }
-function checkpoint() { const { undo: U, redo: Rd } = stacks(), sn = snapKb(); if (U[U.length - 1] === sn) return; U.push(sn); if (U.length > UNDO_MAX) U.shift(); Rd.length = 0; persistUndo(); }
+let ckHold = false; // one compound action = one undo step (inner checkpoints are skipped)
+function checkpoint() { if (ckHold) return; const { undo: U, redo: Rd } = stacks(), sn = snapKb(); if (U[U.length - 1] === sn) return; U.push(sn); if (U.length > UNDO_MAX) U.shift(); Rd.length = 0; persistUndo(); }
 function restoreKb(sn) {
   const S = JSON.parse(sn); if (S.kbId !== state.currentKbId) return false;
   const keep = new Set(S.cards.map(c => c.id));
@@ -1562,14 +1567,47 @@ function convertToNote(card) {
   renderCard(card); renderKbList(); refreshOutlineIfOpen(); save(); toast('已轉成貼紙・可從右鍵「轉回對話」', { label: '復原', run: undo });
 }
 const noteEdited = (c) => !!c.origConversation && (!!(c.noteHtml || '').trim() || normMd(c.noteMd) !== normMd(c.origConversation.md) || (c.noteTldr || '') !== (c.origConversation.tldr || ''));
-function convertToConversation(card) {
+function convertToConversation(card, opts = {}) {
   if (!isNote(card) || !card.origConversation) return; if (noteEditing === card.id) commitNote(card);
-  if (noteEdited(card) && !confirm('轉回對話會還原原本的問答，貼紙上做的修改會被捨棄（之後可用 Ctrl＋Z 復原）。要繼續嗎？')) return;
-  checkpoint(); const o = card.origConversation;
+  if (noteEdited(card) && !opts.choice) {
+    choiceDialog('轉回對話', '這張貼紙在轉換後有修改過。轉回對話會還原原本的問答，貼紙上的修改不會帶回對話。', [
+      { id: 'copy', label: '複製一份貼紙再轉回', primary: true }, { id: 'drop', label: '直接轉回（捨棄修改）' }, { id: 'cancel', label: '取消' }])
+      .then((ch) => { if (ch === 'copy' || ch === 'drop') convertToConversation(card, { choice: ch }); });
+    return;
+  }
+  checkpoint(); ckHold = true;
+  try { if (opts.choice === 'copy') duplicateNote(card, { link: true, quiet: true }); } finally { ckHold = false; }
+  const o = card.origConversation;
   for (const k of ['kind', 'noteMd', 'noteHtml', 'noteTldr', 'origConversation', ...CONV_FIELDS]) delete card[k];
   for (const k of CONV_FIELDS) if (o[k] !== undefined) card[k] = o[k];
   card.turns = card.turns || []; card.followUps = card.followUps || []; card.grokUrl = card.grokUrl || ''; card.tldr = card.tldr || ''; card.status = card.status || 'active';
-  scrollToEnd.add(card.id); renderCard(card); renderKbList(); refreshOutlineIfOpen(); save(); toast('已轉回對話');
+  scrollToEnd.add(card.id); renderCard(card); renderKbList(); refreshOutlineIfOpen(); save(); toast(opts.choice === 'copy' ? '已轉回對話・修改保留在旁邊的貼紙副本' : '已轉回對話', { label: '復原', run: undo });
+}
+// Copy of a sticky = a NATIVE sticky (never origConversation): content, custom TL;DR, colour, size; placed adjacent to
+// the right with the normal push-apart rules, joins the original's group; opts.link → a manual link original → copy.
+function duplicateNote(card, opts = {}) {
+  if (!isNote(card)) return null; if (noteEditing === card.id) commitNote(card); checkpoint();
+  const c = { id: uid('card'), kbId: card.kbId, parentId: null, x: card.x + 40, y: card.y + 40, collapsed: !!card.collapsed, createdAt: Date.now(), ...newCardFields('note'),
+    title: opts.link ? `${card.title}（貼紙副本）` : `${card.title}（副本）` };
+  for (const k of ['noteMd', 'noteHtml', 'noteTldr', 'color', 'w', 'h']) if (card[k] !== undefined) c[k] = card[k];
+  if (c.noteMd) delete c.noteHtml;
+  state.cards[c.id] = c; renderCard(c); placeAdjacent(c, card, 'right');
+  if (opts.link) state.links.push({ id: uid('link'), kbId: card.kbId, from: card.id, to: c.id, createdAt: Date.now() });
+  drawEdges(); renderKbList(); refreshOutlineIfOpen(); save(); if (!opts.quiet) toast('已複製貼紙', { label: '復原', run: undo });
+  return c;
+}
+// small styled dialog (DESIGN-STYLE modal): resolves with the chosen id, or 'cancel' (Esc / backdrop)
+function choiceDialog(title, text, choices) {
+  return new Promise((resolve) => {
+    const bg = document.createElement('div'); bg.className = 'modal-bg open choice-bg';
+    bg.innerHTML = `<div class="modal choice-modal" role="dialog" aria-modal="true"><h3>${esc(title)}</h3><p class="choice-text">${esc(text)}</p><div class="choice-row">${choices.map(c => `<button class="tb-btn${c.primary ? ' primary' : ''}" data-choice="${c.id}">${esc(c.label)}</button>`).join('')}</div></div>`;
+    document.body.appendChild(bg);
+    const done = (v) => { removeEventListener('keydown', onKey, true); bg.remove(); resolve(v); };
+    const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done('cancel'); } };
+    addEventListener('keydown', onKey, true);
+    bg.addEventListener('click', (e) => { const b = e.target.closest('[data-choice]'); if (b) done(b.dataset.choice); else if (e.target === bg) done('cancel'); });
+    setTimeout(() => bg.querySelector('.primary')?.focus(), 0);
+  });
 }
 function setNoteTldr(card) {
   const v = prompt('自訂這張貼紙的 TL;DR（留空 = 使用第一行）', card.noteTldr || ''); if (v === null) return;
@@ -3524,7 +3562,7 @@ canvasEl.addEventListener('contextmenu', (e) => {
       { icon: '⑂', label: '新增分支對話', disabled: card.status === 'draft', run: () => createDraftChild(card) },
       { icon: '🗒', label: '新增分支貼紙', disabled: card.status === 'draft', run: () => createDraftChild(card, null, 'note') },
       { icon: '↗', label: '連結到…', disabled: card.status === 'draft', run: () => startLinkPick(card.id) },
-      ...(isNote(card) ? (card.origConversation ? [{ icon: '↻', label: '轉回對話', run: () => convertToConversation(card) }] : []) : [{ icon: '🗒', label: '轉成貼紙', disabled: card.status === 'draft' || isBusy(card), run: () => convertToNote(card) }]),
+        ...(isNote(card) ? [{ icon: '📋', label: '複製貼紙', run: () => duplicateNote(card) }, ...(card.origConversation ? [{ icon: '↻', label: '轉回對話', run: () => convertToConversation(card) }] : [])] : [{ icon: '🗒', label: '轉成貼紙', disabled: card.status === 'draft' || isBusy(card), run: () => convertToNote(card) }]),
       '-',
       { icon: card.collapsed ? '⤢' : '⤡', label: card.collapsed ? '展開' : '收合', disabled: card.status === 'draft', run: () => cardAction(card, 'collapse') },
       isNote(card) ? { icon: '✎', label: '自訂 TL;DR', run: () => setNoteTldr(card) } : { icon: '↻', label: '重新產生 TL;DR', disabled: !hasTurns, run: () => { requestTldr(card, true); if (!card.collapsed) toast('TL;DR 已在背景重新產生（收合後可看到）'); } },
@@ -3783,7 +3821,7 @@ canvasEl.addEventListener('scroll', (e) => { if (e.target.classList?.contains('t
 window.addEventListener('resize', drawEdges);
 window.__app = { save: () => save(), toast: (m, a) => toast(m, a), flushSave: () => flushSave(), get savePending() { return savePending; },
   inject(st) { savePending = false; clearTimeout(saveTimer); localStorage.setItem(STORE_KEY, JSON.stringify(st)); }, // supported test path: replace stored state, then reload
-  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem, sanitizeNote: (h) => sanitizeNote(h), noteTldr: (c) => noteTldr(c), outlineMd: () => buildOutlineMarkdown(clusters().map(c => c.id)), notesPayload: () => buildNotesPayload(clusters().map(c => c.id), '__all__'), undo: () => undo(), redo: () => redo(), toNote: (id) => convertToNote(state.cards[id]), toConv: (id) => convertToConversation(state.cards[id]) };
+  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem, sanitizeNote: (h) => sanitizeNote(h), noteTldr: (c) => noteTldr(c), outlineMd: () => buildOutlineMarkdown(clusters().map(c => c.id)), notesPayload: () => buildNotesPayload(clusters().map(c => c.id), '__all__'), undo: () => undo(), redo: () => redo(), toNote: (id) => convertToNote(state.cards[id]), toConv: (id) => convertToConversation(state.cards[id]), dupNote: (id) => duplicateNote(state.cards[id]) };
 </script>
 </body>
 </html>
