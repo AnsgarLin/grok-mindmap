@@ -618,6 +618,26 @@
   .modal input:focus, .modal textarea.prompt:focus { border-color: var(--gold); outline: none; }
   .modal .vars { background: var(--gold-wash); border-color: var(--hair); }
   .modal .hint { color: var(--muted); }
+
+  /* ---------- v0.9 sticky note (空白貼紙): ruled paper, folded corner, same palette ---------- */
+  .card.note > .box { background: linear-gradient(var(--paper, #FBF7EC), var(--paper, #FBF7EC)) padding-box; background-image: repeating-linear-gradient(to bottom, transparent 0 25px, rgba(86,101,127,.07) 25px 26px); background-color: #FBF6E6; border-radius: 3px 3px 18px 3px; border-color: #E4D9BC; box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 2px 4px rgba(70,52,20,.06), 0 12px 24px -16px rgba(70,52,20,.35); }
+  .card.note > .box::before { content: ''; position: absolute; left: 50%; top: -7px; width: 64px; height: 14px; transform: translateX(-50%) rotate(-1.5deg); background: rgba(184,149,74,.28); border-left: 1px dashed rgba(184,149,74,.5); border-right: 1px dashed rgba(184,149,74,.5); pointer-events: none; }
+  .card.note > .box::after { content: ''; position: absolute; right: -1px; bottom: -1px; width: 18px; height: 18px; background: linear-gradient(135deg, #EADFC2 50%, transparent 50%); border-top-left-radius: 4px; box-shadow: -1px -1px 2px rgba(70,52,20,.10); pointer-events: none; }
+  .card.note .title { font-style: italic; }
+  .card.note .note-kind { color: var(--gold-deep, #8E6F2E); display: grid; place-items: center; flex: none; }
+  .card.note .note-body { min-height: 72px; cursor: text; font-family: var(--f-serif); }
+  .card.note .note-body .answer { line-height: 26px; }
+  .card.note .note-body .answer p { margin: 0 0 0; }
+  .card.note .note-body img, .card.note .note-edit img { max-width: 100%; height: auto; border-radius: 3px; border: 1px solid var(--hair, #e6e3dc); display: block; margin: 6px 0; }
+  .card.note .note-ph { color: var(--muted-2, #9a968c); font-style: italic; line-height: 26px; }
+  .card.note .note-edit { outline: none; min-height: 72px; line-height: 26px; font-size: 14px; color: #2B2F35; white-space: pre-wrap; word-break: break-word; }
+  .card.note .note-edit.md { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; }
+  .card.note.editing > .box { border-color: var(--gold, #B8954A); }
+  .card.note .note-hint { font-size: 11px; color: var(--muted-2, #9a968c); margin-top: 6px; letter-spacing: .03em; }
+  .card .kind-pick { display: inline-flex; flex: none; gap: 1px; padding: 1px; margin: 0; border: 1px solid var(--hair, #e6e3dc); border-radius: 999px; background: var(--paper, #fff); }
+  .card .kind-pick button { border: 0; background: none; border-radius: 999px; padding: 2px 8px; font-size: 11.5px; line-height: 16px; color: var(--muted, #7a776f); display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+  .card .kind-pick button.on { background: var(--navy, #2B3A55); color: #fff; }
+  .card .kind-pick button:not(.on):hover { background: var(--gold-wash, #f6efdc); color: var(--navy, #2B3A55); }
 </style>
 </head>
 <body>
@@ -653,7 +673,8 @@
       <div class="empty-hint" id="emptyHint" style="display:none"><div><div class="eh-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.8"/><circle cx="5.5" cy="17" r="1.8"/><circle cx="18.5" cy="17" r="1.8"/><path d="M12 6.8V12M12 12l-5 3.6M12 12l5 3.6"/></svg></div><div class="eh-main">按右鍵建立新對話</div><div class="eh-sub">或點上方「＋ 新對話」・這個知識庫還是空的</div><div class="eh-sub">之後可用 Shift＋拖曳框選卡片，再按右鍵建立群組</div></div></div>
       <div id="marquee"></div>
       <div class="help-pop" id="helpPop">
-        <div><b>右鍵</b>：建立新對話、分支、連結、整理等選單</div>
+        <div><b>右鍵</b>：建立新對話／新貼紙、分支、連結、整理等選單</div>
+        <div><b>空白貼紙</b>：上方「新貼紙」或右鍵建立；點內容即可編輯，可貼上文字、連結、圖片，純文字支援 Markdown；新對話草稿上方可切換成貼紙</div>
         <div><b>雙擊</b>：放大　<b>右鍵雙擊</b>（或 Alt/Option＋雙擊）：縮小　<b>雙擊標題</b>：改名</div>
         <div><b>卡片四邊的 ＋</b>：點擊在該側開新分支對話；拖曳到另一張卡片（或右鍵「連結到…」）建立連結</div>
         <div><b>點選箭頭</b>後按 × / Delete，或在箭頭上按右鍵：取消連結（可復原）；選取時或右鍵可改箭頭顏色（分支與連結相同）</div>
@@ -724,6 +745,7 @@
    Switch the app icon (favicon + top-left logo) here: icons/option-1.svg … option-4.svg */
 /* ---------- thin-line icon set (DESIGN-STYLE.md §Icons): 24-unit grid, 1.4px stroke, round caps/joins, currentColor ---------- */
 const ICO = {
+  note: '<path d="M5 4h14v10l-5 6H5z"/><path d="M14 20v-6h5"/><path d="M8.5 9h7M8.5 12.5h4"/>',
   plus: '<path d="M12 5v14M5 12h14"/>', minus: '<path d="M5 12h14"/>', close: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
   tidy: '<path d="M11 3.5l1.5 4.2 4.2 1.5-4.2 1.5L11 14.9l-1.5-4.2-4.2-1.5 4.2-1.5z"/><path d="M18 14.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/><path d="M5.5 16.5l.45 1.05 1.05.45-1.05.45-.45 1.05-.45-1.05L4 18l1.05-.45z"/>',
   collapseAll: '<path d="M4 14h6v6M20 10h-6V4M14 10l6.5-6.5M3.5 20.5L10 14"/>', expandAll: '<path d="M15 3.5h5.5V9M9 20.5H3.5V15M20.5 3.5L14 10M3.5 20.5L10 14"/>',
@@ -752,7 +774,7 @@ const ICO = {
 const ico = (n, s = 16, cls = '') => ICO[n] ? `<svg class="ico${cls ? ' ' + cls : ''}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]}</svg>` : '';
 // legacy glyph → icon (menus, top bar); anything not listed (e.g. '1:1') is shown as text
 const GLYPH_ICO = { '＋': 'plus', '－': 'minus', '✕': 'close', '✨': 'tidy', '⤡': 'fold', '⤢': 'unfold', '◎': 'fit', '☰': 'outline', '🗑': 'trash', '📋': 'copy',
-  '↗': 'link', '↻': 'refresh', '⇱': 'ungroup', '⊟': 'ungroup', '⑂': 'branch', '▣': 'group', '✂︎': 'cut', '✎': 'edit', '⤾': 'resize', '⬚': 'marquee', '⚙': 'settings' };
+  '↗': 'link', '↻': 'refresh', '⇱': 'ungroup', '⊟': 'ungroup', '⑂': 'branch', '▣': 'group', '✂︎': 'cut', '✎': 'edit', '⤾': 'resize', '⬚': 'marquee', '⚙': 'settings', '🗒': 'note' };
 const iconHtml = (g, s = 15) => (GLYPH_ICO[g] ? ico(GLYPH_ICO[g], s) : g ? esc(g) : '');
 const APP_ICON = 'icons/option-8.svg'; // v0.8: option 8 (see icons/preview-v2.png)
 document.getElementById('favicon').href = APP_ICON;
@@ -1265,6 +1287,7 @@ const tldrLoading = new Set();
 let tldrActive = 0; const tldrQueue = [];
 function pumpTldr() { while (tldrActive < 2 && tldrQueue.length) { const job = tldrQueue.shift(); tldrActive++; job().finally(() => { tldrActive--; pumpTldr(); }); } }
 function requestTldr(card, force) {
+  if (isNote(card)) return; // sticky notes: TL;DR = user-set or first line, never an API call
   if (tldrLoading.has(card.id) || !doneTurns(card).length) return;
   if (card.tldr && !force) return;
   tldrLoading.add(card.id); card.tldrError = ''; renderCard(card);
@@ -1347,18 +1370,19 @@ function pruneDrafts(exceptId, allKbs) {
   return dead.length;
 }
 let freshDraft = null; // { id, t } — keystrokes right after opening a draft go to it, never to the hovered card
-function createRootCard(at) { checkpoint();
+function createRootCard(at, kind) { checkpoint();
   pruneDrafts();
   const v = kb().viewport, rect = $('#canvas').getBoundingClientRect();
   const RES_H = 280, x0 = at ? at.x : (rect.width / 2 - v.x) / v.z - 220, y0 = at ? at.y : (rect.height / 3 - v.y) / v.z - 60;
   const { x, y } = freeSpot(Math.round(x0), Math.round(y0), 440, RES_H); // click point / view centre, nudged to the nearest free spot
-  const card = { id: uid('card'), kbId: state.currentKbId, parentId: null, x, y, collapsed: false, status: 'draft', createdAt: Date.now(),
-    title: '新對話', turns: [], tldr: '', followUps: [], grokUrl: '' };
+  const card = { id: uid('card'), kbId: state.currentKbId, parentId: null, x, y, collapsed: false, createdAt: Date.now(), ...newCardFields(kind, '新對話') };
   state.cards[card.id] = card; renderCard(card); renderKbList(); updateEmpty();
   settleCard(card, (w, h) => freeSpot(Math.round(x0), Math.round(y0), w, h, card.id), RES_H); save(); selectCard(card.id);
   if (!at) panToCard(card);
+  if (kind === 'note') { setTimeout(() => editNote(card), 30); return card; }
   freshDraft = { id: card.id, t: performance.now() };
   setTimeout(() => cardEls[card.id]?.querySelector('textarea')?.focus({ preventScroll: true }), 30);
+  return card;
 }
 
 /* ---------- undo / redo (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z or Ctrl+Y) ----------
@@ -1381,7 +1405,7 @@ function persistUndo(now) {
 }
 addEventListener('pagehide', () => persistUndo(true));
 const stacks = () => undoStacks[state.currentKbId] || (undoStacks[state.currentKbId] = { undo: [], redo: [] });
-const GEO_KEYS = ['x', 'y', 'w', 'h', 'collapsed', 'color', 'parentId', 'sourceFollowUp', 'parentSide', 'childSide', 'edgeColor'];
+const GEO_KEYS = ['kind', 'x', 'y', 'w', 'h', 'collapsed', 'color', 'parentId', 'sourceFollowUp', 'parentSide', 'childSide', 'edgeColor'];
 function snapKb() { const kbId = state.currentKbId;
   return JSON.stringify({ kbId, cards: Object.values(state.cards).filter(c => c.kbId === kbId), links: state.links.filter(l => l.kbId === kbId), groups: state.groups.filter(g => g.kbId === kbId) }); }
 function checkpoint() { const { undo: U, redo: Rd } = stacks(), sn = snapKb(); if (U[U.length - 1] === sn) return; U.push(sn); if (U.length > UNDO_MAX) U.shift(); Rd.length = 0; persistUndo(); }
@@ -1417,8 +1441,113 @@ function deleteCard(card) { checkpoint();
 
 const stripDemo = (a) => (a || '').replace(/^> 示範模式.*\n\n/, '');
 function cardMarkdown(c) {
+  if (isNote(c)) return `## ${c.title}\n\n${c.noteTldr ? `**TL;DR：** ${c.noteTldr}\n\n` : ''}${noteToMd(c)}`;
   const turns = c.turns.map(t => `**Q：** ${t.q}\n\n${stripDemo(t.a)}`).join('\n\n---\n\n');
   return `## ${c.title}\n\n${c.tldr ? `**TL;DR：** ${c.tldr}\n\n` : ''}${turns}\n\n後續問題：\n${(c.followUps || []).map(f => '- ' + f).join('\n')}${c.grokUrl ? `\n\nGrok 對話：${c.grokUrl}` : ''}`;
+}
+
+/* ---------- v0.9 sticky notes (card.kind === 'note') ----------
+   A note has a title and free-form content the user types / pastes: rich HTML (sanitised: basic formatting, links,
+   lists, tables, images) in card.noteHtml, or plain text that looks like Markdown in card.noteMd (rendered with md()).
+   Pasted images are stored in IndexedDB (mediaPut, key 'note_<hash>') and referenced by <img data-h>. No Grok calls. */
+const isNote = (c) => c?.kind === 'note';
+const NOTE_OK = { A: ['href'], IMG: ['data-h', 'src', 'alt'], P: [], DIV: [], BR: [], SPAN: [], B: [], STRONG: [], I: [], EM: [], U: [], S: [], DEL: [], UL: [], OL: [], LI: [],
+  H1: [], H2: [], H3: [], H4: [], BLOCKQUOTE: [], CODE: [], PRE: [], TABLE: [], THEAD: [], TBODY: [], TR: [], TH: [], TD: [], HR: [] };
+const NOTE_DROP = new Set(['SCRIPT', 'STYLE', 'META', 'LINK', 'TITLE', 'IFRAME', 'OBJECT', 'EMBED', 'SVG', 'NOSCRIPT', 'TEMPLATE', 'HEAD', 'FORM', 'INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'VIDEO', 'AUDIO', 'CANVAS']);
+function sanitizeNote(html) {
+  const doc = new DOMParser().parseFromString(`<body>${html || ''}</body>`, 'text/html');
+  const walk = (n) => { for (const ch of [...n.childNodes]) {
+    if (ch.nodeType === 3) continue; if (ch.nodeType !== 1 || NOTE_DROP.has(ch.tagName)) { ch.remove(); continue; }
+    walk(ch); const ok = NOTE_OK[ch.tagName]; if (!ok) { ch.replaceWith(...ch.childNodes); continue; }
+    for (const a of [...ch.attributes]) if (!ok.includes(a.name)) ch.removeAttribute(a.name);
+    if (ch.tagName === 'A') { const h = ch.getAttribute('href') || ''; if (/^(https?:|mailto:)/i.test(h)) { ch.setAttribute('target', '_blank'); ch.setAttribute('rel', 'noopener'); } else ch.removeAttribute('href'); }
+    if (ch.tagName === 'IMG') { if (ch.hasAttribute('data-h')) ch.removeAttribute('src'); else if (!/^https?:/i.test(ch.getAttribute('src') || '')) ch.remove(); }
+  } };
+  walk(doc.body); return doc.body.innerHTML.replace(/^(\s|<br>)+|(\s|<br>)+$/g, '');
+}
+function noteHtmlToMd(html) {
+  const body = new DOMParser().parseFromString(`<body>${html || ''}</body>`, 'text/html').body;
+  const kids = (n) => [...n.childNodes].map(conv).join('');
+  function conv(n) {
+    if (n.nodeType === 3) return n.textContent.replace(/\u00a0/g, ' '); if (n.nodeType !== 1) return '';
+    const c = () => kids(n);
+    switch (n.tagName) {
+      case 'B': case 'STRONG': { const t = c(); return t.trim() ? `**${t}**` : t; }
+      case 'I': case 'EM': { const t = c(); return t.trim() ? `*${t}*` : t; }
+      case 'CODE': return '`' + c() + '`';
+      case 'A': return n.getAttribute('href') ? `[${c()}](${n.getAttribute('href')})` : c();
+      case 'BR': return '\n';
+      case 'IMG': return '（圖片）';
+      case 'H1': case 'H2': case 'H3': case 'H4': return `\n\n**${c().trim()}**\n\n`;
+      case 'LI': return `\n- ${c().trim()}`;
+      case 'UL': case 'OL': return c() + '\n\n';
+      case 'BLOCKQUOTE': return `\n\n> ${c().trim()}\n\n`;
+      case 'TR': return '\n' + c(); case 'TD': case 'TH': return c().trim() + '　';
+      case 'HR': return '\n\n---\n\n';
+      case 'P': case 'DIV': case 'PRE': case 'TABLE': return `\n${c()}\n`;
+      default: return c();
+    }
+  }
+  return kids(body).replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+const noteToMd = (c) => (c.noteMd || noteHtmlToMd(c.noteHtml)).trim();
+function noteTldr(c) { // user-set, else the first non-empty line / heading of the content
+  if ((c.noteTldr || '').trim()) return c.noteTldr.trim();
+  const line = noteToMd(c).split('\n').map(l => l.replace(/^\s*(#{1,6}\s+|[-*+]\s+|\d+\.\s+|>\s*)/, '').replace(/\*\*|__|`|（圖片）/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').trim()).find(Boolean) || '';
+  return line.length > 80 ? line.slice(0, 80) + '…' : line;
+}
+const NOTE_MD_RE = /^(#{1,6}\s|\s*[-*+]\s|\s*\d+\.\s|>\s|```|\|.*\|)|\*\*[^*]+\*\*|\[[^\]]+\]\(https?:/m;
+let noteEditing = null;
+function hydrateNoteImgs(root) { root.querySelectorAll('img[data-h]:not([src])').forEach(async (img) => { const r = await mediaGet(img.dataset.h); if (r?.src) { img.src = r.src; requestAnimationFrame(() => drawEdges()); } }); }
+function editNote(card) {
+  const el = cardEls[card.id]; const nb = el?.querySelector('.note-body'); if (!nb || card.collapsed) return;
+  if (noteEditing && noteEditing !== card.id) commitNote(state.cards[noteEditing]);
+  noteEditing = card.id; el.classList.add('editing');
+  nb.innerHTML = '<div class="note-edit" contenteditable="true" spellcheck="false"></div><div class="note-hint">可直接貼上文字、連結、圖片；純文字支援 Markdown。點卡片外完成編輯・Esc 結束</div>';
+  const ed = nb.querySelector('.note-edit');
+  if (card.noteMd) { ed.classList.add('md'); ed.innerText = card.noteMd; } else { ed.innerHTML = card.noteHtml || ''; hydrateNoteImgs(ed); }
+  ed.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(ed); r.collapse(false); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+}
+function commitNote(card) {
+  if (!card || noteEditing !== card.id) return; noteEditing = null;
+  const el = cardEls[card.id], ed = el?.querySelector('.note-edit'); el?.classList.remove('editing'); if (!ed) { renderCard(card); return; }
+  const rich = ed.querySelector('a, b, strong, i, em, u, img, ul, ol, li, h1, h2, h3, h4, table, blockquote, pre, code, hr');
+  const text = ed.innerText.replace(/\u00a0/g, ' ').replace(/\s+$/, '');
+  delete card.noteMd; delete card.noteHtml;
+  if (!rich && NOTE_MD_RE.test(text)) card.noteMd = text;
+  else if (rich) card.noteHtml = sanitizeNote(ed.innerHTML);
+  else if (text.trim()) card.noteHtml = esc(text).replace(/\n/g, '<br>');
+  if (!card.noteMd && !card.noteHtml) card.noteHtml = '';
+  renderCard(card); refreshOutlineIfOpen(); renderKbList(); save();
+}
+async function pasteIntoNote(e, ed) {
+  const cd = e.clipboardData; if (!cd) return;
+  const files = [...(cd.files || [])].filter(f => f.type.startsWith('image/'));
+  const html = cd.getData('text/html');
+  if (files.length) {
+    e.preventDefault(); if (ed.classList.contains('md')) { ed.classList.remove('md'); }
+    for (const f of files) {
+      const src = await new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(f); });
+      const h = 'note_' + hashStr(src); await mediaPut(h, { status: 'done', kind: 'image', src, createdAt: Date.now() });
+      document.execCommand('insertHTML', false, `<img data-h="${h}" src="${src}" alt="">`);
+    }
+  } else if (html && !ed.classList.contains('md')) { e.preventDefault(); document.execCommand('insertHTML', false, sanitizeNote(html)); }
+  else { e.preventDefault(); document.execCommand('insertText', false, cd.getData('text/plain')); }
+}
+function newCardFields(kind, title) {
+  return kind === 'note' ? { kind: 'note', status: 'active', title: '新貼紙', noteHtml: '', turns: [], tldr: '', followUps: [], grokUrl: '' }
+    : { status: 'draft', title, turns: [], tldr: '', followUps: [], grokUrl: '' };
+}
+function convertDraftToNote(card) { checkpoint();
+  const q = (card.draftQ || '').trim(); delete card.draftQ; delete card.touched; freshDraft = null;
+  Object.assign(card, { kind: 'note', status: 'active', noteHtml: q ? esc(q).replace(/\n/g, '<br>') : '' });
+  if (['新對話', '新分支', ''].includes(card.title || '')) card.title = '新貼紙';
+  renderCard(card); if (card.parentId && state.cards[card.parentId]) renderCard(state.cards[card.parentId]); renderKbList(); refreshOutlineIfOpen(); save();
+  setTimeout(() => editNote(card), 30);
+}
+function setNoteTldr(card) {
+  const v = prompt('自訂這張貼紙的 TL;DR（留空 = 使用第一行）', card.noteTldr || ''); if (v === null) return;
+  checkpoint(); if (v.trim()) card.noteTldr = v.trim(); else delete card.noteTldr; renderCard(card); refreshOutlineIfOpen(); save();
 }
 
 /* ============================== Rendering: cards ============================== */
@@ -1438,6 +1567,10 @@ const LINK_HANDLES = SIDES.map(sd => `<div class="link-handle" data-side="${sd}"
 function renderCard(card) {
   let el = cardEls[card.id];
   if (!el) { el = document.createElement('div'); el.className = 'card'; el.dataset.id = card.id; $('#world').appendChild(el); cardEls[card.id] = el; cardRO.observe(el); }
+  if (isNote(card) && noteEditing === card.id && el.querySelector('.note-edit')) { // never wipe the editor mid-edit
+    el.classList.toggle('selected', selectedId === card.id); el.classList.toggle('msel', multiSel.has(card.id)); el.dataset.color = card.color || '';
+    el.style.left = card.x + 'px'; el.style.top = card.y + 'px'; const t = el.querySelector('.head .title'); if (t && t.contentEditable !== 'true') t.textContent = card.title || '新貼紙'; applyCardSize(card); return; }
+  el.classList.toggle('note', isNote(card));
   const oldScroll = el.querySelector('.thread')?.scrollTop;
   el.classList.toggle('collapsed', !!card.collapsed);
   el.dataset.color = card.color || '';
@@ -1447,14 +1580,22 @@ function renderCard(card) {
   const childByChip = Object.fromEntries(kids.filter(k => k.sourceFollowUp).map(k => [k.sourceFollowUp, k]));
   const busy = isBusy(card);
   const head = `<div class="head" data-drag>
-      <div class="title" title="雙擊重新命名">${esc(card.title || '新對話')}${card.turns.length > 1 ? `<span class="turn-count">· ${card.turns.length} 輪</span>` : ''}</div>
+      ${isNote(card) ? `<span class="note-kind" title="空白貼紙">${ico('note', 14)}</span>` : ''}<div class="title" title="雙擊重新命名">${esc(card.title || (isNote(card) ? '新貼紙' : '新對話'))}${!isNote(card) && card.turns.length > 1 ? `<span class="turn-count">· ${card.turns.length} 輪</span>` : ''}</div>
+      ${card.status === 'draft' && !isNote(card) ? `<div class="kind-pick" role="radiogroup" aria-label="卡片類型"><button class="on" role="radio" aria-checked="true" title="向 Grok 提問的對話匡">${ico('chat', 13)}對話匡</button><button data-act="to-note" role="radio" aria-checked="false" title="改成空白貼紙，自己貼上內容">${ico('note', 13)}空白貼紙</button></div>` : ''}
       <button class="icon-btn palette" data-act="color" title="卡片顏色"${card.color ? ` style="color:${palOf(card.color)?.solid}"` : ''}>${ICON_PALETTE}</button>
       <button class="icon-btn" data-act="collapse" title="${card.collapsed ? '展開' : '收合為 TL;DR'}">${ico(card.collapsed ? 'unfold' : 'fold', 15)}</button>
       <button class="icon-btn del" data-act="delete" title="刪除">${ico('trash', 15)}</button>
       <button class="icon-btn" data-act="copy" title="複製為 Markdown">${ico('copy', 15)}</button>
     </div>`;
   let body = '';
-  if (card.status === 'draft') {
+  if (isNote(card) && card.collapsed) {
+    const tl = noteTldr(card), n = noteToMd(card).replace(/\s/g, '').length;
+    body = `<div class="tldr-head"><span class="tldr-label">TL;DR</span>${card.noteTldr ? '<span class="tldr-stale" style="opacity:.75" title="自訂摘要">自訂</span>' : ''}<span class="grow"></span><button class="tldr-regen" data-act="note-tldr" title="自訂 TL;DR（留空 = 使用第一行）">✎ 自訂</button></div><div class="tldr">${tl ? esc(tl) : '（空白貼紙）'}</div>
+      <div class="meta"><span>${ico('note', 12)} 貼紙</span><span>${n} 字</span><span>${kids.length} 個子卡片</span></div>`;
+  } else if (isNote(card)) {
+    const empty = !card.noteMd && !(card.noteHtml || '').trim();
+    body = `<div class="thread note-body" data-note>${empty ? '<span class="note-ph">點這裡輸入，或直接貼上文字、連結、圖片……</span>' : `<div class="answer note-view">${card.noteMd ? md(card.noteMd) : card.noteHtml}</div>`}</div>`;
+  } else if (card.status === 'draft') {
     body = `<div class="draft"><textarea placeholder="想學什麼？輸入一個問題開始新的對話……">${esc(card.draftQ || '')}</textarea>
       <div class="row"><button class="tb-btn primary" data-act="start">開始 ${ico('send', 14)}</button></div></div>`;
   } else if (card.collapsed) {
@@ -1490,6 +1631,7 @@ function renderCard(card) {
   if (th) { if (scrollToEnd.has(card.id)) { const last = th.querySelector('.turn:last-child'); th.scrollTop = last && card.turns.length > 1 ? last.offsetTop - th.offsetTop - 48 : 0; scrollToEnd.delete(card.id); } else if (oldScroll != null) th.scrollTop = oldScroll; }
   requestAnimationFrame(drawEdges);
   if (el.querySelector('figure.mmd:not(.done), .media-ph:not(.done)')) hydrateViz(el);
+  if (isNote(card)) hydrateNoteImgs(el);
 }
 
 /* ---------- card size (user-resizable) ----------
@@ -3076,7 +3218,7 @@ window.addEventListener('keydown', (e) => {
   const target = cardEls[hoverId].querySelector('[data-ask]:not(:disabled), .box textarea:not(:disabled)');
   const a = document.activeElement; if (!target || a === target) return;
   if (a && a !== document.body && a.matches('input, textarea, select, [contenteditable="true"]')) {
-    if (!a.closest('.card') || a.closest('.card.draft') || a.tagName === 'SELECT' || composing || e.isComposing || (a.value ?? a.textContent ?? '').length > 0) return;
+    if (!a.closest('.card') || a.closest('.card.draft, .note-edit') || a.tagName === 'SELECT' || composing || e.isComposing || (a.value ?? a.textContent ?? '').length > 0) return;
   }
   if (selectedId !== hoverId) selectCard(hoverId); setHov(hoverId); // reveals the hidden ask bar (visibility flips instantly) so it can take focus
   revealAsk(target);
@@ -3092,8 +3234,12 @@ function cardAction(card, act) { if (['collapse', 'delete'].includes(act)) check
 }
 $('#world').addEventListener('click', (e) => {
   const cardEl = e.target.closest('.card'); if (!cardEl) return;
-  const card = state.cards[cardEl.dataset.id]; const actEl = e.target.closest('[data-act]'); if (!actEl) return;
+  const card = state.cards[cardEl.dataset.id]; const actEl = e.target.closest('[data-act]');
+  if (!actEl && isNote(card) && !card.collapsed && !e.shiftKey && e.target.closest('.note-body') && !e.target.closest('a, .note-edit')) { editNote(card); return; }
+  if (!actEl) return;
   const act = actEl.dataset.act;
+  if (act === 'to-note') { convertDraftToNote(card); return; }
+  if (act === 'note-tldr') { setNoteTldr(card); return; }
   if (['collapse', 'tldr-regen', 'delete', 'copy'].includes(act)) cardAction(card, act);
   else if (act === 'color') { e.stopPropagation(); openSwatchPop(actEl, card.color || '', (c) => setCardColor(card, c)); }
   else if (act === 'chip-grok') { e.stopPropagation(); const f = card.followUps[+actEl.dataset.i]; const child = childrenOf(card.id).find(k => k.sourceFollowUp === f); if (child?.grokUrl) window.open(child.grokUrl, '_blank'); }
@@ -3130,6 +3276,10 @@ $('#world').addEventListener('keydown', (e) => {
     else if (e.target.matches('textarea')) { e.preventDefault(); cardEl.querySelector('[data-act="start"]').click(); }
   }
 });
+$('#world').addEventListener('input', (e) => { if (!e.target.closest('.note-edit')) return; growQ.add(e.target.closest('.card').dataset.id); });
+$('#world').addEventListener('paste', (e) => { const ed = e.target.closest?.('.note-edit'); if (ed) pasteIntoNote(e, ed); });
+$('#world').addEventListener('focusout', (e) => { const ed = e.target.closest?.('.note-edit'); if (!ed || ed.contains(e.relatedTarget)) return; const id = ed.closest('.card')?.dataset.id; setTimeout(() => { if (noteEditing === id && !ed.contains(document.activeElement)) commitNote(state.cards[id]); }, 0); });
+$('#world').addEventListener('keydown', (e) => { if (e.key === 'Escape' && e.target.closest?.('.note-edit')) { e.preventDefault(); e.target.closest('.note-edit').blur(); } });
 $('#world').addEventListener('change', (e) => {
   if (!e.target.matches('[data-grok]')) return;
   const card = state.cards[e.target.closest('.card').dataset.id];
@@ -3240,6 +3390,8 @@ window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && linkPick) 
 const GLOBAL_ACTIONS = [
   { id: 'btnNewChat', icon: '＋', label: '新對話', menuLabel: '在此建立新對話', bar: true, title: '在畫面中央附近建立新對話',
     run: (ctx) => ctx?.at ? createRootCard(ctx.at) : createRootCard() },
+  { id: 'btnNewNote', icon: '🗒', label: '新貼紙', menuLabel: '在此建立新貼紙', bar: true, title: '建立空白貼紙：自己輸入或貼上內容（不呼叫 Grok）',
+    run: (ctx) => ctx?.at ? createRootCard(ctx.at, 'note') : createRootCard(null, 'note') },
   { id: 'btnTidy', icon: '✨', label: '整理', bar: true, title: '自動排版：由左上往右下，盡量排成正方形', needsCards: true, run: () => tidy() },
   { id: 'btnCollapseAll', icon: '⤡', label: '全部收合', bar: true, needsCards: true, run: () => collapseAll() },
   { id: 'btnExpandAll', icon: '⤢', label: '全部展開', bar: true, needsCards: true, run: () => expandAll() },
@@ -3257,8 +3409,8 @@ function globalMenuItems(ctx = {}) {
   const has = kbCards().length > 0, items = [];
   GLOBAL_ACTIONS.forEach((a, i) => {
     if (a.zoom && !GLOBAL_ACTIONS[i - 1]?.zoom) items.push('-');
-    if (i === 1) items.push('-');
-    const label = typeof a.menuLabel === 'function' ? a.menuLabel() : (a.menuLabel && (a.id !== 'btnNewChat' || ctx.at) ? a.menuLabel : a.label);
+    if (i === 2) items.push('-');
+    const label = typeof a.menuLabel === 'function' ? a.menuLabel() : (a.menuLabel && (!['btnNewChat', 'btnNewNote'].includes(a.id) || ctx.at) ? a.menuLabel : a.label);
     items.push({ icon: a.icon, label, hint: a.hint, disabled: a.needsCards && !has, actionId: a.id, run: () => a.run(ctx) });
   });
   return items;
@@ -3278,14 +3430,15 @@ function openCtx(clientX, clientY, items) {
     const sw = e.target.closest('.ctx-row .swatch'); if (sw) { const it = items[+sw.closest('.ctx-row').dataset.i]; closeCtx(); it.onPick(sw.dataset.color || null); return; }
     const b = e.target.closest('.ctx-item'); if (!b || b.disabled) return; const it = items[+b.dataset.i]; closeCtx(); it.run(); };
 }
-function createDraftChild(parent, side) { checkpoint();
+function createDraftChild(parent, side, kind) { checkpoint();
   pruneDrafts();
   const spot = adjacentPos(parent, side || 'right', 440, 200);
   const card = { id: uid('card'), kbId: parent.kbId, parentId: parent.id, sourceFollowUp: null, ...(side ? { parentSide: side } : {}),
     x: spot.x, y: spot.y,
-    collapsed: false, status: 'draft', createdAt: Date.now(), title: '新分支', turns: [], tldr: '', followUps: [], grokUrl: '' };
+    collapsed: false, createdAt: Date.now(), ...newCardFields(kind, '新分支') };
   state.cards[card.id] = card; renderCard(card); renderCard(parent); renderKbList();
   placeAdjacent(card, parent, side || 'right'); save(); selectCard(card.id); panToCard(card);
+  if (kind === 'note') { setTimeout(() => editNote(card), 200); return card; }
   freshDraft = { id: card.id, t: performance.now() };
   setTimeout(() => cardEls[card.id]?.querySelector('textarea')?.focus({ preventScroll: true }), 200);
 }
@@ -3343,10 +3496,11 @@ canvasEl.addEventListener('contextmenu', (e) => {
     const hasTurns = doneTurns(card).length > 0;
     openCtx(e.clientX, e.clientY, [...(multiSel.has(card.id) ? [...selectionMenuItems(), { header: '這張卡片' }] : []),
       { icon: '⑂', label: '新增分支對話', disabled: card.status === 'draft', run: () => createDraftChild(card) },
+      { icon: '🗒', label: '新增分支貼紙', disabled: card.status === 'draft', run: () => createDraftChild(card, null, 'note') },
       { icon: '↗', label: '連結到…', disabled: card.status === 'draft', run: () => startLinkPick(card.id) },
       '-',
       { icon: card.collapsed ? '⤢' : '⤡', label: card.collapsed ? '展開' : '收合', disabled: card.status === 'draft', run: () => cardAction(card, 'collapse') },
-      { icon: '↻', label: '重新產生 TL;DR', disabled: !hasTurns, run: () => { requestTldr(card, true); if (!card.collapsed) toast('TL;DR 已在背景重新產生（收合後可看到）'); } },
+      isNote(card) ? { icon: '✎', label: '自訂 TL;DR', run: () => setNoteTldr(card) } : { icon: '↻', label: '重新產生 TL;DR', disabled: !hasTurns, run: () => { requestTldr(card, true); if (!card.collapsed) toast('TL;DR 已在背景重新產生（收合後可看到）'); } },
       { icon: '📋', label: '複製 Markdown', run: () => cardAction(card, 'copy') },
       { icon: '⤾', label: '重設大小', disabled: !card.w && !card.h, run: () => resetCardSize(card) },
       '-', { header: '卡片顏色' }, { row: swatchRowHtml(card.color), onPick: (c) => setCardColor(card, c) },
@@ -3459,6 +3613,7 @@ function buildNotesPayload(rootIds, key) {
     const unexplored = (c.followUps || []).filter(f => !explored.includes(f));
     out += `<card id="${c.id}" title="${attr(c.title || firstQ(c))}" depth="${depth}" parent="${p ? attr(p.title) : '（根卡片）'}"${groupOf(c.id) ? ` group="${attr(groupOf(c.id).name)}"` : ''}>\n`;
     if (c.tldr) out += `<tldr>${x(c.tldr)}</tldr>\n`;
+    if (isNote(c)) { if (c.noteTldr) out += `<tldr>${x(c.noteTldr)}</tldr>\n`; out += `<note kind="使用者自己貼上的筆記">\n${x(noteToMd(c))}\n</note>\n`; }
     c.turns.filter(t => t.status === 'done').forEach((t, i) => { out += `<turn n="${i + 1}">\n<q>${x(t.q)}</q>\n<a>\n${x(stripDemo(t.a))}\n</a>\n</turn>\n`; });
     if (explored.length) out += `<explored>${explored.map(f => `\n- ${x(f)}`).join('')}\n</explored>\n`;
     if (unexplored.length) out += `<unexplored>${unexplored.map(f => `\n- ${x(f)}`).join('')}\n</unexplored>\n`;
@@ -3479,13 +3634,15 @@ function buildOutlineMarkdown(rootIds) {
   { // groups: cards in a group listed under the group name
     const inScope = new Set(); const coll = (c) => { inScope.add(c.id); childrenOf(c.id).forEach(coll); }; rootIds.forEach(id => coll(state.cards[id]));
     const gs = kbGroups().map(g => [g, g.members.filter(id => inScope.has(id)).map(id => state.cards[id])]).filter(([, ms]) => ms.length);
-    if (gs.length) { out += `## 群組\n\n`; gs.forEach(([g, ms]) => { out += `### 📁 ${g.name}\n\n${ms.map(c => `- **${c.title || firstQ(c)}**${c.tldr ? `：${c.tldr}` : ''}`).join('\n')}\n\n`; }); }
+    if (gs.length) { out += `## 群組\n\n`; gs.forEach(([g, ms]) => { out += `### 📁 ${g.name}\n\n${ms.map(c => { const t = isNote(c) ? noteTldr(c) : c.tldr; return `- **${c.title || firstQ(c)}**${t ? `：${t}` : ''}`; }).join('\n')}\n\n`; }); }
   }
   const walk = (c, depth, num) => {
     const h = '#'.repeat(Math.min(depth + 2, 5));
     out += `${h} ${num} ${c.title || firstQ(c)}\n\n`;
     if (c.tldr) out += `> TL;DR：${c.tldr}\n\n`;
+    if (isNote(c) && c.noteTldr) out += `> TL;DR：${c.noteTldr}\n\n`;
     { const L = linksOf(c); const parts = [...L.out.map(x => `→ ${x.title}`), ...L.in.map(x => `← ${x.title}`)]; if (parts.length) out += `相關連結：${parts.join('、')}\n\n`; }
+    if (isNote(c)) { const m = noteToMd(c); if (m) out += `${m}\n\n`; }
     c.turns.filter(t => t.status === 'done').forEach(t => { out += `**Q：${t.q}**\n\n${stripDemo(t.a)}\n\n`; });
     childrenOf(c.id).forEach((k, i) => walk(k, depth + 1, `${num}${i + 1}.`));
   };
@@ -3599,7 +3756,7 @@ canvasEl.addEventListener('scroll', (e) => { if (e.target.classList?.contains('t
 window.addEventListener('resize', drawEdges);
 window.__app = { save: () => save(), toast: (m, a) => toast(m, a), flushSave: () => flushSave(), get savePending() { return savePending; },
   inject(st) { savePending = false; clearTimeout(saveTimer); localStorage.setItem(STORE_KEY, JSON.stringify(st)); }, // supported test path: replace stored state, then reload
-  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem };
+  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem, sanitizeNote: (h) => sanitizeNote(h), noteTldr: (c) => noteTldr(c), outlineMd: () => buildOutlineMarkdown(clusters().map(c => c.id)), notesPayload: () => buildNotesPayload(clusters().map(c => c.id), '__all__'), undo: () => undo(), redo: () => redo() };
 </script>
 </body>
 </html>
