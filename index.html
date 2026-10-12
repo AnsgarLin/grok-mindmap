@@ -1415,7 +1415,8 @@ function restoreKb(sn) {
   for (const c of kbCards()) if (!keep.has(c.id)) { delete state.cards[c.id]; cardEls[c.id]?.remove(); delete cardEls[c.id]; multiSel.delete(c.id); }
   for (const c of S.cards) { const cur = state.cards[c.id];
     if (!cur) { state.cards[c.id] = c; continue; }
-    for (const k of GEO_KEYS) { if (c[k] === undefined) delete cur[k]; else cur[k] = c[k]; } }
+    const kindFlip = (c.kind || '') !== (cur.kind || ''); // conversation ⇄ sticky: restore the content fields too
+    for (const k of kindFlip ? [...GEO_KEYS, 'noteMd', 'noteHtml', 'noteTldr', 'origConversation', ...CONV_FIELDS] : GEO_KEYS) { if (c[k] === undefined) delete cur[k]; else cur[k] = c[k]; } }
   state.links = [...state.links.filter(l => l.kbId !== S.kbId), ...S.links];
   state.groups = [...state.groups.filter(g => g.kbId !== S.kbId), ...S.groups];
   pushHome.clear(); if (selEdge && !edgeExists(selEdge)) selEdge = null; if (selectedId && !state.cards[selectedId]) selectedId = null;
@@ -1544,6 +1545,31 @@ function convertDraftToNote(card) { checkpoint();
   if (['新對話', '新分支', ''].includes(card.title || '')) card.title = '新貼紙';
   renderCard(card); if (card.parentId && state.cards[card.parentId]) renderCard(state.cards[card.parentId]); renderKbList(); refreshOutlineIfOpen(); save();
   setTimeout(() => editNote(card), 30);
+}
+// v0.9.1 conversation ⇄ sticky. The conversation (turns, follow-ups, Grok URL, TL;DR, status) is kept untouched in
+// card.origConversation; only stickies that have it can go back. Going back restores the original conversation and DROPS
+// edits made on the sticky (confirm first if it was edited; Ctrl+Z brings the sticky with its edits back).
+const CONV_FIELDS = ['turns', 'followUps', 'grokUrl', 'tldr', 'tldrTurns', 'tldrAt', 'status', 'askDraft'];
+const normMd = (t) => String(t || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+const convToMd = (c) => c.turns.filter(t => t.status === 'done').map(t => `**Q：** ${t.q}\n\n${stripDemo(t.a)}`).join('\n\n---\n\n');
+function convertToNote(card) {
+  if (isNote(card) || card.status === 'draft' || isBusy(card)) return; checkpoint(); if (noteEditing) commitNote(state.cards[noteEditing]);
+  const orig = {}; for (const k of CONV_FIELDS) if (card[k] !== undefined) orig[k] = card[k];
+  const mdTxt = convToMd(card); orig.md = mdTxt;
+  for (const k of CONV_FIELDS) delete card[k];
+  Object.assign(card, { kind: 'note', status: 'active', turns: [], followUps: [], grokUrl: '', tldr: '', origConversation: orig, noteMd: mdTxt });
+  if (orig.tldr) card.noteTldr = orig.tldr; delete card.noteHtml; chipChoice.delete(card.id);
+  renderCard(card); renderKbList(); refreshOutlineIfOpen(); save(); toast('已轉成貼紙・可從右鍵「轉回對話」', { label: '復原', run: undo });
+}
+const noteEdited = (c) => !!c.origConversation && (!!(c.noteHtml || '').trim() || normMd(c.noteMd) !== normMd(c.origConversation.md) || (c.noteTldr || '') !== (c.origConversation.tldr || ''));
+function convertToConversation(card) {
+  if (!isNote(card) || !card.origConversation) return; if (noteEditing === card.id) commitNote(card);
+  if (noteEdited(card) && !confirm('轉回對話會還原原本的問答，貼紙上做的修改會被捨棄（之後可用 Ctrl＋Z 復原）。要繼續嗎？')) return;
+  checkpoint(); const o = card.origConversation;
+  for (const k of ['kind', 'noteMd', 'noteHtml', 'noteTldr', 'origConversation', ...CONV_FIELDS]) delete card[k];
+  for (const k of CONV_FIELDS) if (o[k] !== undefined) card[k] = o[k];
+  card.turns = card.turns || []; card.followUps = card.followUps || []; card.grokUrl = card.grokUrl || ''; card.tldr = card.tldr || ''; card.status = card.status || 'active';
+  scrollToEnd.add(card.id); renderCard(card); renderKbList(); refreshOutlineIfOpen(); save(); toast('已轉回對話');
 }
 function setNoteTldr(card) {
   const v = prompt('自訂這張貼紙的 TL;DR（留空 = 使用第一行）', card.noteTldr || ''); if (v === null) return;
@@ -3498,6 +3524,7 @@ canvasEl.addEventListener('contextmenu', (e) => {
       { icon: '⑂', label: '新增分支對話', disabled: card.status === 'draft', run: () => createDraftChild(card) },
       { icon: '🗒', label: '新增分支貼紙', disabled: card.status === 'draft', run: () => createDraftChild(card, null, 'note') },
       { icon: '↗', label: '連結到…', disabled: card.status === 'draft', run: () => startLinkPick(card.id) },
+      ...(isNote(card) ? (card.origConversation ? [{ icon: '↻', label: '轉回對話', run: () => convertToConversation(card) }] : []) : [{ icon: '🗒', label: '轉成貼紙', disabled: card.status === 'draft' || isBusy(card), run: () => convertToNote(card) }]),
       '-',
       { icon: card.collapsed ? '⤢' : '⤡', label: card.collapsed ? '展開' : '收合', disabled: card.status === 'draft', run: () => cardAction(card, 'collapse') },
       isNote(card) ? { icon: '✎', label: '自訂 TL;DR', run: () => setNoteTldr(card) } : { icon: '↻', label: '重新產生 TL;DR', disabled: !hasTurns, run: () => { requestTldr(card, true); if (!card.collapsed) toast('TL;DR 已在背景重新產生（收合後可看到）'); } },
@@ -3756,7 +3783,7 @@ canvasEl.addEventListener('scroll', (e) => { if (e.target.classList?.contains('t
 window.addEventListener('resize', drawEdges);
 window.__app = { save: () => save(), toast: (m, a) => toast(m, a), flushSave: () => flushSave(), get savePending() { return savePending; },
   inject(st) { savePending = false; clearTimeout(saveTimer); localStorage.setItem(STORE_KEY, JSON.stringify(st)); }, // supported test path: replace stored state, then reload
-  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem, sanitizeNote: (h) => sanitizeNote(h), noteTldr: (c) => noteTldr(c), outlineMd: () => buildOutlineMarkdown(clusters().map(c => c.id)), notesPayload: () => buildNotesPayload(clusters().map(c => c.id), '__all__'), undo: () => undo(), redo: () => redo() };
+  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem, sanitizeNote: (h) => sanitizeNote(h), noteTldr: (c) => noteTldr(c), outlineMd: () => buildOutlineMarkdown(clusters().map(c => c.id)), notesPayload: () => buildNotesPayload(clusters().map(c => c.id), '__all__'), undo: () => undo(), redo: () => redo(), toNote: (id) => convertToNote(state.cards[id]), toConv: (id) => convertToConversation(state.cards[id]) };
 </script>
 </body>
 </html>
