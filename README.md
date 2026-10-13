@@ -34,6 +34,7 @@
 - **圖解輔助**：回答中的 Mermaid 圖解與表格直接顯示；建議插圖／影片只有在點擊後才呼叫 xAI 生成。
 - **多個知識庫**：左側欄切換知識庫，各自保存畫面位置、選取與大綱狀態。
 - **復原／重做**：卡片位置、大小、連結、群組、顏色等操作都可以復原。
+- **中英文介面**：設定或側欄底部的語言按鈕即時切換繁體中文／英文，預設依瀏覽器語言；英文模式有英文的預設提示詞、範例資料與 Source Serif 4 內文字型，回答也改用英文。自訂提示詞不會被覆寫。
 - **示範模式**：沒有填 API Key 也能操作，回答會以示範內容代替。
 
 ## 快速開始
@@ -97,7 +98,7 @@ open index.html        # Windows：start index.html；Linux：xdg-open index.htm
 - **純前端**：單一檔案 `index.html`，原生 JavaScript、HTML、CSS 與 SVG，沒有框架、沒有建置步驟。
 - **xAI API**（OpenAI 相容）：對話 `/v1/chat/completions`、圖片 `/v1/images/generations`、影片 `/v1/videos/generations`。
 - **Mermaid 11**：放在 `vendor/` 本機載入，使用自訂主題。
-- **字型**：Playfair Display 與 Noto Serif TC（子集），皆以 SIL Open Font License 1.1 授權，授權文字見 `vendor/fonts/`。
+- **字型**：Playfair Display、Noto Serif TC（子集）與 Source Serif 4（英文介面內文，Latin 子集），皆以 SIL Open Font License 1.1 授權，授權文字見 `vendor/fonts/`。
 
 ## 專案結構
 
@@ -106,11 +107,11 @@ open index.html        # Windows：start index.html；Linux：xdg-open index.htm
 ├── index.html          # 整個 App（HTML + CSS + JS）
 ├── SPEC.md             # 產品規格與版本紀錄
 ├── DESIGN-STYLE.md     # 設計風格（法式編輯風）與設計變數
-├── prompts/            # 預設回答提示詞、大綱改寫提示詞
+├── prompts/            # 預設回答提示詞、大綱改寫提示詞（中文與 .en.md 英文版）
 ├── icons/              # App 圖示（option-8 為目前使用）
 ├── vendor/
 │   ├── mermaid.min.js  # Mermaid 11
-│   ├── fonts/          # Playfair Display、Noto Serif TC 子集與授權
+│   ├── fonts/          # Playfair Display、Noto Serif TC、Source Serif 4 子集與授權
 │   └── textures/       # 畫布紋理
 ├── docs/               # README 截圖
 ├── README.md           # 說明文件（繁體中文）
@@ -122,6 +123,7 @@ open index.html        # Windows：start index.html；Linux：xdg-open index.htm
 
 - 資料只存在單一瀏覽器，尚無跨裝置同步或匯入／匯出檔案功能。
 - grok.com 沒有公開的對話紀錄 API，所以只能用網址連結 Grok 對話，無法自動匯入內容。
+- 切換介面語言不會翻譯既有卡片或 AI 回答，只切換介面、預設提示詞與新內容的語言。
 - Noto Serif TC 只內建介面用字的子集，其他中文字會改用系統的宋體／明體。
 - 貼紙內的圖片在大綱文章中以「（圖片）」表示。
 - 原生的空白貼紙無法轉成對話；由對話轉來的貼紙轉回時會還原原本的對話，貼紙上的修改不會合併回對話（可選擇另存成貼紙副本）。

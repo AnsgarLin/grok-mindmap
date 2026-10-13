@@ -381,6 +381,8 @@
      ====================================================================================================== */
   @font-face { font-family: "Playfair Display"; src: url(vendor/fonts/PlayfairDisplay-latin.woff2) format("woff2"); font-weight: 400 900; font-style: normal; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215; }
   @font-face { font-family: "Playfair Display"; src: url(vendor/fonts/PlayfairDisplay-Italic-latin.woff2) format("woff2"); font-weight: 400 900; font-style: italic; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F; }
+  @font-face { font-family: "Source Serif 4"; src: url(vendor/fonts/SourceSerif4-latin.woff2) format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "Source Serif 4"; src: url(vendor/fonts/SourceSerif4-Italic-latin.woff2) format("woff2"); font-weight: 200 900; font-style: italic; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @font-face { font-family: "Noto Serif TC UI"; src: url(vendor/fonts/NotoSerifTC-500-ui-subset.woff2) format("woff2"); font-weight: 400 700; font-display: swap; }
   :root {
     /* surfaces */ --cream: #F5EFE2; --ivory: #FBF7EE; --paper: #FDFAF3; --sidebar: #1F2730; --sidebar-2: #28323E; --sidebar-3: #323D4A;
@@ -404,7 +406,8 @@
   #left .brand { padding: 22px 16px 16px; gap: 10px; font-weight: 400; position: relative; border-bottom: 1px solid var(--hair-side); margin: 0 12px 4px; padding-left: 4px; padding-right: 4px; }
   #left .brand .logo { width: 30px; height: 30px; }
   #left .brand .wm { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
-  #left .brand .wm-name { font-family: var(--f-serif); font-weight: 500; font-size: 17px; letter-spacing: .14em; color: #F3ECDD; white-space: nowrap; }
+  #left .brand .wm-name { font-family: var(--f-serif); font-weight: 500; font-size: 17px; letter-spacing: .14em; color: #F3ECDD; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  html.lang-en #left .brand .wm-name { letter-spacing: .01em; font-size: 15px; }
   #left .brand .wm-tag { font-family: "Playfair Display", serif; font-variant: small-caps; text-transform: lowercase; font-size: 11.5px; letter-spacing: .2em; color: var(--gold); margin-top: 3px; white-space: nowrap; }
   #left .ico-btn, #left .rail .ico-btn { color: var(--side-muted); }
   #left .ico-btn:hover { background: rgba(255,255,255,.06); color: var(--gold-soft); }
@@ -442,6 +445,11 @@
   #topbar { height: 52px; background: rgba(250,246,237,.82); backdrop-filter: blur(6px); border-bottom: 1px solid var(--hair); gap: 6px; padding: 0 18px; }
   #topbar .kb-title { font-family: var(--f-display); font-weight: 400; font-size: 21px; letter-spacing: .03em; color: var(--ink); display: flex; align-items: center; gap: 4px; }
   #topbar .kb-title .kb-badge { margin-right: 8px; }
+  #topbar .tb-btn { white-space: nowrap; flex: none; }
+  html.lang-en #topbar .kb-title { min-width: 96px; overflow: hidden; }
+  #topbar { container-type: inline-size; container-name: topbar; }
+  @container topbar (max-width: 900px) { html.lang-en #topbar .tb-btn:not(.primary) .tb-l { display: none; } html.lang-en #topbar .tb-btn:not(.primary) { padding: 6px 8px; } }
+  @container topbar (max-width: 640px) { html:not(.lang-en) #topbar .tb-btn:not(.primary) .tb-l { display: none; } html:not(.lang-en) #topbar .tb-btn:not(.primary) { padding: 6px 8px; } }
   .tb-btn { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: 1px solid var(--hair-2); color: var(--navy); border-radius: 6px; font-size: 13px; letter-spacing: .03em; padding: 6px 11px; transition: background .12s, border-color .12s, color .12s; }
   .tb-btn:hover { filter: none; background: var(--gold-wash); border-color: var(--gold); color: var(--ink); }
   .tb-btn .ico { color: var(--gold-deep); flex: none; }
@@ -642,6 +650,17 @@
   .choice-modal .choice-text { margin: 0 0 18px; line-height: 1.75; color: var(--ink, #2B2F35); font-family: var(--f-serif); font-size: 14px; }
   .choice-row { display: flex; flex-direction: column; gap: 8px; }
   .choice-row .tb-btn { justify-content: center; width: 100%; padding: 9px 12px; }
+  /* ---------- v1.0 i18n: English uses Source Serif 4 for body serif text; long words / URLs wrap everywhere ---------- */
+  html.lang-en { --f-serif: "Source Serif 4", "Playfair Display", Georgia, serif; --f-ui: -apple-system, "Helvetica Neue", "Segoe UI", system-ui, Roboto, Arial, "Noto Sans TC", "PingFang TC", sans-serif; }
+  html.lang-en .card .answer, html.lang-en .card .q-bubble, html.lang-en .card .tldr { font-family: var(--f-serif); }
+  html.lang-en .card .answer { font-size: 14.5px; line-height: 1.65; }
+  .card .answer, .card .q-bubble, .card .tldr, .card .note-body, .card .note-edit, .card .chip .txt, .card .choice-q, .card .meta, #outline, .toast, .ctx-menu, .gt-name { overflow-wrap: anywhere; }
+  .card .answer pre, #outline pre { overflow-x: auto; overflow-wrap: normal; }
+  .card .answer table, #outline table { table-layout: auto; max-width: 100%; }
+  .card .answer td, .card .answer th { overflow-wrap: anywhere; }
+  .footer .status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .footer .lang-btn { flex: none; margin: 0; border: 1px solid rgba(201,169,106,.45); background: transparent; color: var(--side-muted, #9BA2A9); border-radius: 999px; padding: 1px 10px; font-size: 11px; letter-spacing: .04em; cursor: pointer; font-family: var(--f-ui); }
+  .footer .lang-btn:hover { color: var(--side-ink, #ECE5D6); border-color: rgba(201,169,106,.8); }
 </style>
 </head>
 <body>
@@ -652,7 +671,7 @@
     <div id="kbList"></div>
     <button class="left-btn" id="btnNewKb"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>新知識庫</span></button>
     <div class="footer">
-      <div class="api-status" id="apiStatus"></div>
+      <div class="status-row"><div class="api-status" id="apiStatus"></div><button class="lang-btn" id="btnLang" data-lang-pick data-i18n-skip title="中文 / English">English</button></div>
       <button class="left-btn" style="margin:0" id="btnSettings"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M2.8 12h2.6M18.6 12h2.6M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></svg><span>設定（xAI API Key）</span></button>
     </div>
     <div class="rail">
@@ -706,6 +725,8 @@
 <div class="modal-bg" id="settingsModal">
   <div class="modal wide">
     <h3>設定</h3>
+    <label>介面語言</label>
+    <select id="setLang" data-lang-pick data-i18n-skip style="width:100%;border:1px solid var(--border);border-radius:8px;padding:7px 10px;background:var(--paper)"><option value="zh-TW">繁體中文</option><option value="en">English</option></select>
     <label>xAI API Key（只存在此瀏覽器的 localStorage）</label>
     <input id="setKey" type="password" placeholder="xai-..." />
     <label>模型</label>
@@ -719,7 +740,7 @@
     <div class="vars">輸出 JSON 格式（title / answer / followUps）會自動附加在最後，不需要寫在這裡。<button class="tb-btn" id="setAnswerReset" style="margin-left:8px;padding:2px 8px">還原預設回答提示詞</button></div>
     <label>大綱改寫提示詞（全域預設，「✨ 用 Grok 改寫」使用的 system prompt）</label>
     <textarea class="prompt" id="setPrompt" spellcheck="false"></textarea>
-    <div class="vars">可用變數（點一下插入）：<code data-var-target="setPrompt" data-var="{{知識庫}}">{{知識庫}}</code> 知識庫名稱　<code data-var-target="setPrompt" data-var="{{範圍}}">{{範圍}}</code> 族群根卡片標題或「整個知識庫」　<code data-var-target="setPrompt" data-var="{{今天}}">{{今天}}</code> 今天日期　<code data-var-target="setPrompt" data-var="{{卡片數}}">{{卡片數}}</code> 範圍內卡片數　<code data-var-target="setPrompt" data-var="{{寫作偏好}}">{{寫作偏好}}</code> 寫作偏好（提示詞中沒有這個變數時，會自動附加在最後）<br>筆記內容會以結構化的 &lt;notes&gt;/&lt;card&gt; 格式放在 user 訊息中，不需要寫在提示詞裡。</div>
+    <div class="vars" id="setVars">可用變數（點一下插入）：<code data-var-target="setPrompt" data-var="{{知識庫}}">{{知識庫}}</code> 知識庫名稱　<code data-var-target="setPrompt" data-var="{{範圍}}">{{範圍}}</code> 族群根卡片標題或「整個知識庫」　<code data-var-target="setPrompt" data-var="{{今天}}">{{今天}}</code> 今天日期　<code data-var-target="setPrompt" data-var="{{卡片數}}">{{卡片數}}</code> 範圍內卡片數　<code data-var-target="setPrompt" data-var="{{寫作偏好}}">{{寫作偏好}}</code> 寫作偏好（提示詞中沒有這個變數時，會自動附加在最後）<br>筆記內容會以結構化的 &lt;notes&gt;/&lt;card&gt; 格式放在 user 訊息中，不需要寫在提示詞裡。</div>
     <label>寫作偏好（讀者、篇幅、風格…，代入 {{寫作偏好}}）</label>
     <input id="setStyle" placeholder="例：給有 2 年經驗的後端工程師看；約 1500 字；多用表格與例子" />
     <div class="row split"><button class="tb-btn" id="setPromptReset">還原預設提示詞</button><span style="display:flex;gap:8px"><button class="tb-btn" id="setCancel">取消</button><button class="tb-btn primary" id="setSave">儲存</button></span></div>
@@ -733,7 +754,7 @@
       <label><input type="radio" name="kbpMode" value="custom" /> 此知識庫自訂</label>
     </div>
     <textarea class="prompt" id="kbpPrompt" spellcheck="false"></textarea>
-    <div class="vars">可用變數（點一下插入）：<code data-var-target="kbpPrompt" data-var="{{知識庫}}">{{知識庫}}</code> 知識庫名稱　<code data-var-target="kbpPrompt" data-var="{{範圍}}">{{範圍}}</code> 族群根卡片標題或「整個知識庫」　<code data-var-target="kbpPrompt" data-var="{{今天}}">{{今天}}</code> 今天日期　<code data-var-target="kbpPrompt" data-var="{{卡片數}}">{{卡片數}}</code> 範圍內卡片數　<code data-var-target="kbpPrompt" data-var="{{寫作偏好}}">{{寫作偏好}}</code> 寫作偏好（提示詞中沒有這個變數時，會自動附加在最後）<br>筆記內容會以結構化的 &lt;notes&gt;/&lt;card&gt; 格式放在 user 訊息中，不需要寫在提示詞裡。</div>
+    <div class="vars" id="kbpVars">可用變數（點一下插入）：<code data-var-target="kbpPrompt" data-var="{{知識庫}}">{{知識庫}}</code> 知識庫名稱　<code data-var-target="kbpPrompt" data-var="{{範圍}}">{{範圍}}</code> 族群根卡片標題或「整個知識庫」　<code data-var-target="kbpPrompt" data-var="{{今天}}">{{今天}}</code> 今天日期　<code data-var-target="kbpPrompt" data-var="{{卡片數}}">{{卡片數}}</code> 範圍內卡片數　<code data-var-target="kbpPrompt" data-var="{{寫作偏好}}">{{寫作偏好}}</code> 寫作偏好（提示詞中沒有這個變數時，會自動附加在最後）<br>筆記內容會以結構化的 &lt;notes&gt;/&lt;card&gt; 格式放在 user 訊息中，不需要寫在提示詞裡。</div>
     <label>此知識庫的寫作偏好（留空則沿用全域設定）</label>
     <input id="kbpStyle" placeholder="例：偏重數學直覺，公式用 LaTeX 行內寫法" />
     <div class="row split"><button class="tb-btn" id="kbpReset">還原為預設提示詞</button><span style="display:flex;gap:8px"><button class="tb-btn" id="kbpCancel">取消</button><button class="tb-btn primary" id="kbpSave">儲存</button></span></div>
@@ -788,6 +809,146 @@ document.querySelectorAll('.app-logo').forEach(el => el.innerHTML = `<img src="$
 const $ = (s, r = document) => r.querySelector(s);
 const uid = (p = 'id') => p + '_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* ============================== i18n (v1.0): zh-TW (default) / en ==============================
+   Source strings stay in Traditional Chinese. In English mode:
+   - T(s) translates a string (exact dictionary match, then regex patterns, then '・'-joined parts);
+   - a MutationObserver translates every UI text node and title / placeholder / aria-label / alt attribute as it
+     appears, EXCEPT user / AI content (I18N_SKIP: answers, questions, chips, TL;DRs, sticky content, card titles,
+     knowledge-base and group names, the outline article). Original text is remembered so switching back restores it.
+   - native confirm / prompt / alert messages go through T(). In zh-TW mode nothing runs (zero overhead). */
+const LANG_KEY = 'grok-mindmap-lang';
+let LANG = (() => { try { const v = localStorage.getItem(LANG_KEY); if (v === 'en' || v === 'zh-TW') return v; } catch {} return /^zh/i.test(navigator.language || '') ? 'zh-TW' : 'en'; })();
+const isEn = () => LANG === 'en';
+const CJK_RE = /[\u3000-\u303f\u3400-\u9fff\uff01-\uff60]/;
+const pl = (n, w, p) => `${n} ${+n === 1 ? w : (p || w + 's')}`;
+const EN = {
+  'Grok 心智圖知識庫': 'Grok Mindmap Knowledge Base', '心智圖知識庫': 'Mindmap Knowledge', '收合側欄': 'Collapse sidebar', '展開側欄': 'Expand sidebar', '知識庫': 'Knowledge bases',
+  '新知識庫': 'New knowledge base', '新增知識庫': 'New knowledge base', '設定（xAI API Key）': 'Settings (xAI API key)', '設定': 'Settings', '名稱，按 Enter 建立': 'Name, press Enter to create',
+  '取消連結（Delete）': 'Remove link (Delete)', '連結顏色': 'Link color', '按右鍵建立新對話': 'Right-click to start a new chat',
+  '或點上方「＋ 新對話」・這個知識庫還是空的': 'or click “＋ New chat” above · this knowledge base is still empty', '之後可用 Shift＋拖曳框選卡片，再按右鍵建立群組': 'Later, Shift + drag to select cards, then right-click to create a group',
+  '操作說明': 'Controls', '拖曳調整大綱寬度': 'Drag to resize the outline', '大綱文章': 'Outline', '收合大綱': 'Collapse outline', '用 Grok 改寫': 'Rewrite with Grok', '提示詞': 'Prompt',
+  '這個知識庫的改寫提示詞': 'This knowledge base’s rewrite prompt', '複製 Markdown': 'Copy Markdown', 'xAI API Key（只存在此瀏覽器的 localStorage）': 'xAI API key (stored only in this browser’s localStorage)',
+  '模型': 'Model', '未填 API Key 時會使用「示範模式」產生假的回答，方便操作介面。': 'Without an API key the app runs in “demo mode” with sample answers, so you can try the interface.',
+  '呼叫 OpenAI 相容的': 'Calls the OpenAI-compatible', '端點。': 'endpoint.', '圖片模型': 'Image model', '影片模型': 'Video model',
+  '回答提示詞（每張卡片回答問題時的 system prompt；包含何時加入圖解／表格／插圖／影片）': 'Answer prompt (the system prompt each card uses to answer; includes when to add diagrams / tables / illustrations / videos)',
+  '輸出 JSON 格式（title / answer / followUps）會自動附加在最後，不需要寫在這裡。': 'The JSON output format (title / answer / followUps) is appended automatically; no need to write it here.',
+  '還原預設回答提示詞': 'Restore default answer prompt', '大綱改寫提示詞（全域預設，「✨ 用 Grok 改寫」使用的 system prompt）': 'Outline rewrite prompt (global default; the system prompt used by “✨ Rewrite with Grok”)',
+  '寫作偏好（讀者、篇幅、風格…，代入 {{寫作偏好}}）': 'Writing preferences (audience, length, style…, fills {{style}})', '例：給有 2 年經驗的後端工程師看；約 1500 字；多用表格與例子': 'e.g. for backend engineers with 2 years of experience; about 1,500 words; plenty of tables and examples',
+  '還原預設提示詞': 'Restore default prompt', '取消': 'Cancel', '儲存': 'Save', '知識庫提示詞': 'Knowledge base prompt', '使用全域提示詞': 'Use the global prompt', '此知識庫自訂': 'Custom for this knowledge base',
+  '此知識庫的寫作偏好（留空則沿用全域設定）': 'Writing preferences for this knowledge base (leave empty to use the global setting)', '例：偏重數學直覺，公式用 LaTeX 行內寫法': 'e.g. focus on mathematical intuition, inline LaTeX for formulas',
+  '還原為預設提示詞': 'Restore default prompt', '點空白處或按 Esc 關閉': 'Click outside or press Esc to close', '介面語言': 'Language',
+  // cards
+  '新對話': 'New chat', '新分支': 'New branch', '新貼紙': 'New sticky', '群組': 'Group', '空白貼紙': 'Blank sticky', '對話匡': 'Conversation', '卡片類型': 'Card type',
+  '向 Grok 提問的對話匡': 'A conversation card that asks Grok', '改成空白貼紙，自己貼上內容': 'Make it a blank sticky and paste your own content', '雙擊重新命名': 'Double-click to rename',
+  '卡片顏色': 'Card color', '展開': 'Expand', '收合為 TL;DR': 'Collapse to TL;DR', '刪除': 'Delete', '複製為 Markdown': 'Copy as Markdown', '自訂摘要': 'Custom summary', '自訂': 'Custom',
+  '✎ 自訂': '✎ Custom', '自訂 TL;DR（留空 = 使用第一行）': 'Custom TL;DR (empty = use the first line)', '（空白貼紙）': '(blank sticky)', '貼紙': 'Sticky',
+  '點這裡輸入，或直接貼上文字、連結、圖片……': 'Click to type, or paste text, links or images…', '可直接貼上文字、連結、圖片；純文字支援 Markdown。點卡片外完成編輯・Esc 結束': 'Paste text, links or images; plain text supports Markdown. Click outside the card or press Esc to finish',
+  '想學什麼？輸入一個問題開始新的對話……': 'What do you want to learn? Type a question to start a new conversation…', '開始': 'Start', '產生中…': 'Generating…', '（尚無摘要）': '(no summary yet)', '（尚無內容）': '(no content yet)',
+  '產生摘要後又新增了對話': 'New turns were added after the summary was generated', '已過期': 'Outdated', '重新產生 TL;DR': 'Regenerate TL;DR', '↻ 重新產生': '↻ Regenerate', '已連結 Grok': 'Linked to Grok',
+  '在這裡提問': 'Ask here', '在新分支中提問': 'Ask in a new branch', '→ 已展開': '→ Expanded', '開啟 Grok ↗': 'Open Grok ↗', '繼續提問…': 'Ask a follow-up…', '等待回答中……': 'Waiting for the answer…',
+  '在這張卡片中繼續提問……': 'Ask a follow-up in this card…', '送出': 'Send', 'Grok 對話': 'Grok chat', '貼上 grok.com 對話網址': 'Paste a grok.com conversation URL', '開啟這個 Grok 對話': 'Open this Grok conversation',
+  '開啟': 'Open', '在 grok.com 以這個問題開新對話': 'Start a new grok.com conversation with this question', '在 Grok 問': 'Ask on Grok', 'Grok 思考中…': 'Grok is thinking…', '重試': 'Retry',
+  '點擊：在此側開新對話｜拖曳：建立連結': 'Click: new branch on this side | Drag: create a link', '拖曳：改到其他邊或其他卡片': 'Drag: move to another side or card', '上次產生時被中斷': 'Interrupted last time', '未完成': 'Incomplete',
+  '拖曳移動群組・右鍵更多': 'Drag to move the group · right-click for more', '拖曳移動群組・雙擊改名・右鍵更多': 'Drag to move the group · double-click to rename · right-click for more',
+  // diagrams & media
+  '圖解繪製中…': 'Drawing diagram…', '點一下放大': 'Click to enlarge', '🖼️ 建議插圖': '🖼️ Suggested illustration', '🎬 建議影片': '🎬 Suggested video', '生成中…': 'Generating…',
+  '影片生成中（約需 1–3 分鐘）…': 'Generating video (about 1–3 minutes)…', '生成圖片': 'Generate image', '生成影片': 'Generate video', '點擊後才會呼叫 xAI（會計費）': 'xAI is called only when you click (billed)',
+  '需先在設定填入 xAI API Key': 'Add an xAI API key in Settings first', '下載 ↗': 'Download ↗', '（xAI 影片網址可能會過期）': '(xAI video URLs may expire)', '回應中沒有圖片': 'No image in the response',
+  '回應中沒有 request_id': 'No request_id in the response', '等待逾時': 'Timed out', '無法解析模型回傳的 JSON': 'Could not parse the JSON returned by the model', '（圖片）': '(image)',
+  // palette
+  '玫瑰': 'Rose', '鼠尾草': 'Sage', '灰藍': 'Slate Blue', '赭石': 'Ochre', '麥稈金': 'Wheat Gold', '預設（墨藍）': 'Default (ink navy)', '無': 'None', '預設': 'default',
+  // menus
+  '在此建立新對話': 'New chat here', '在畫面中央附近建立新對話': 'Create a new chat near the center of the view', '在此建立新貼紙': 'New sticky here', '建立空白貼紙：自己輸入或貼上內容（不呼叫 Grok）': 'Create a blank sticky: type or paste your own content (no Grok call)',
+  '整理': 'Tidy', '自動排版：由左上往右下，盡量排成正方形': 'Auto layout: top-left to bottom-right, as square as possible', '全部收合': 'Collapse all', '全部展開': 'Expand all', '置中': 'Center',
+  '大綱': 'Outline', '關閉大綱': 'Close outline', '開啟大綱': 'Open outline', '放大': 'Zoom in', '縮小': 'Zoom out', '重新命名': 'Rename', '解散群組（保留卡片）': 'Ungroup (keep cards)',
+  '刪除群組與卡片': 'Delete group and cards', '箭頭顏色': 'Arrow color', '取消連結（分離成獨立族群）': 'Remove link (detach as its own cluster)', '取消連結': 'Remove link', '這張卡片': 'This card',
+  '新增分支對話': 'New branch chat', '新增分支貼紙': 'New branch sticky', '連結到…': 'Link to…', '複製貼紙': 'Duplicate sticky', '轉成貼紙': 'Convert to sticky', '轉回對話': 'Convert back to conversation',
+  '收合': 'Collapse', '自訂 TL;DR': 'Custom TL;DR', '重設大小': 'Reset size', '框選卡片': 'Marquee select', 'Shift＋拖曳': 'Shift + drag', '收合選取的卡片': 'Collapse selected cards',
+  '展開選取的卡片': 'Expand selected cards', '移出群組': 'Remove from group', '顏色': 'Color', '取消選取': 'Clear selection', '刪除知識庫': 'Delete knowledge base', '重新命名知識庫': 'Rename knowledge base',
+  '知識庫名稱，按 Enter 建立': 'Knowledge base name, press Enter to create', '模式：': 'Mode: ', '示範（未設定 API Key）': 'Demo (no API key)',
+  // dialogs & toasts
+  '這張貼紙在轉換後有修改過。轉回對話會還原原本的問答，貼紙上的修改不會帶回對話。': 'This sticky was edited after it was converted. Converting back restores the original Q&A; edits on the sticky are not carried back into the conversation.',
+  '複製一份貼紙再轉回': 'Copy the sticky, then convert back', '直接轉回（捨棄修改）': 'Convert back (discard edits)', '已轉回對話・修改保留在旁邊的貼紙副本': 'Converted back · your edits are kept in the sticky copy next to it',
+  '已轉回對話': 'Converted back to conversation', '已轉成貼紙・可從右鍵「轉回對話」': 'Converted to sticky · right-click “Convert back to conversation” to undo', '復原': 'Undo', '已複製貼紙': 'Sticky duplicated',
+  '自訂這張貼紙的 TL;DR（留空 = 使用第一行）': 'Custom TL;DR for this sticky (empty = use the first line)', '沒有可以復原的動作': 'Nothing to undo', '已復原・Ctrl＋Shift＋Z 重做': 'Undone · Ctrl+Shift+Z to redo',
+  '沒有可以重做的動作': 'Nothing to redo', '已重做': 'Redone', '不能連到自己': 'A card cannot link to itself', '這兩張卡片已經有相同方向的連結': 'These two cards already have a link in this direction',
+  '這兩張卡片已經有分支箭頭': 'These two cards already have a branch arrow', '已取消連結': 'Link removed', '拖曳框選卡片・Esc 取消': 'Drag to select cards · Esc to cancel',
+  '分支箭頭的端點只能移到同一張卡片的其他邊': 'A branch arrow’s end can only move to another side of the same card', '放在卡片上才能重新連接': 'Drop it on a card to reconnect',
+  '這兩張卡片之間已經有同方向的箭頭': 'There is already an arrow in this direction between these cards', '已重新連接箭頭': 'Arrow reconnected', '已改變箭頭端點的位置': 'Arrow end moved',
+  '已複製卡片 Markdown': 'Card Markdown copied', '無法存取剪貼簿': 'Cannot access the clipboard', '已跳到對應的子卡片': 'Jumped to the matching child card', '已連結 Grok 對話': 'Grok conversation linked',
+  '已移除連結': 'Link removed', '至少要保留一個知識庫': 'Keep at least one knowledge base', '點選要連結的卡片（Esc 取消）': 'Click the card to link to (Esc to cancel)',
+  'TL;DR 已在背景重新產生（收合後可看到）': 'TL;DR is being regenerated in the background (visible when collapsed)', '已複製大綱 Markdown': 'Outline Markdown copied',
+  '示範模式：請先在設定中填入 xAI API Key': 'Demo mode: add an xAI API key in Settings first', '這個範圍沒有卡片': 'No cards in this scope', '改寫中…': 'Rewriting…',
+  '已還原預設回答提示詞（按儲存後生效）': 'Default answer prompt restored (takes effect after Save)', '已還原預設提示詞（按儲存後生效）': 'Default prompt restored (takes effect after Save)', '設定已儲存': 'Settings saved',
+  '此知識庫改用自訂提示詞': 'This knowledge base now uses a custom prompt', '此知識庫使用全域提示詞': 'This knowledge base uses the global prompt',
+  // outline
+  '尚無內容。': 'Nothing here yet.', '🔄 重新改寫': '🔄 Rewrite again', '✨ 用 Grok 改寫': '✨ Rewrite with Grok', '知識庫自訂提示詞': 'knowledge base prompt', '全域提示詞': 'global prompt', '預設提示詞': 'default prompt',
+  '看自動彙整版': 'Show the auto compilation', '看 Grok 改寫版': 'Show the Grok rewrite', '依卡片樹狀順序自動彙整（標題＋TL;DR＋各輪問答）': 'Auto-compiled in card-tree order (title + TL;DR + every Q&A turn)', '目錄': 'Contents',
+  '學習總整理': 'Study notes', '相關連結': 'Related', '後續問題': 'Follow-up questions', '（根卡片）': '(root card)', '使用者自己貼上的筆記': 'notes the user typed or pasted', '以下是要整合的筆記（依卡片樹狀順序排列）：': 'Here are the notes to integrate (in card-tree order):',
+  '卡片標題': 'Card title',
+};
+const EN_RE = [
+  [/^已移動 (\d+) 張卡片$/, (m, n) => `Moved ${pl(n, 'card')}`], [/^已選取 (\d+) 張卡片・右鍵可建立群組$/, (m, n) => `Selected ${pl(n, 'card')} · right-click to create a group`],
+  [/^已選取 (\d+) 張卡片$/, (m, n) => `${pl(n, 'card')} selected`], [/^建立群組（(\d+) 張）$/, 'Create group ($1)'], [/^刪除 (\d+) 張$/, (m, n) => `Delete ${pl(n, 'card')}`],
+  [/^已變更 (\d+) 張卡片的顏色$/, (m, n) => `Changed the color of ${pl(n, 'card')}`], [/^已收合 (\d+) 張卡片$/, (m, n) => `Collapsed ${pl(n, 'card')}`], [/^已展開 (\d+) 張卡片$/, (m, n) => `Expanded ${pl(n, 'card')}`],
+  [/^已將 (\d+) 張卡片移出群組$/, (m, n) => `Removed ${pl(n, 'card')} from groups`], [/^刪除選取的 (\d+) 張卡片？（子卡片會保留並成為獨立卡片）$/, (m, n) => `Delete the ${pl(n, 'selected card')}? (Child cards are kept as separate cards.)`],
+  [/^已刪除 (\d+) 張卡片$/, (m, n) => `Deleted ${pl(n, 'card')}`], [/^箭頭顏色：(.+)$/, (m, c) => `Arrow color: ${T(c)}`], [/^已建立群組（(\d+) 張卡片）$/, (m, n) => `Group created (${pl(n, 'card')})`],
+  [/^已解散群組「(.*)」（卡片保留）$/, 'Ungrouped “$1” (cards kept)'], [/^刪除群組「(.*)」以及其中 (\d+) 張卡片？此動作無法復原。$/, (m, g, n) => `Delete the group “${g}” and its ${pl(n, 'card')}? This cannot be undone.`],
+  [/^已推開 (\d+) 張卡片$/, (m, n) => `Pushed ${pl(n, 'card')} aside`], [/^已連結：(.*) → (.*)$/, 'Linked: $1 → $2'], [/^已將「(.*)」分離成獨立族群$/, 'Detached “$1” as its own cluster'],
+  [/^已整理 (\d+) 張卡片$/, (m, n) => `Tidied ${pl(n, 'card')}`], [/^已移出群組「(.*)」$/, 'Removed from group “$1”'], [/^已加入群組「(.*)」$/, 'Added to group “$1”'], [/^移出群組「(.*)」$/, 'Remove from group “$1”'],
+  [/^刪除「(.*)」以及底下 (\d+) 張子卡片？$/, (m, t, n) => `Delete “${t}” and its ${pl(n, 'child card')}?`], [/^刪除知識庫「(.*)」與其所有卡片？$/, 'Delete the knowledge base “$1” and all its cards?'],
+  [/^已建立知識庫「(.*)」$/, 'Created knowledge base “$1”'], [/^群組「(.*)」・(\d+) 張卡片$/, (m, g, n) => `Group “${g}” · ${pl(n, 'card')}`], [/^整個知識庫（(\d+) 個族群）$/, (m, n) => `Whole knowledge base (${pl(n, 'cluster')})`],
+  [/^整個知識庫（(.*)）$/, 'Whole knowledge base ($1)'], [/^「(.*)」的改寫提示詞$/, 'Rewrite prompt for “$1”'], [/^產生失敗：(.*)$/, 'Generation failed: $1'], [/^· (\d+) 輪$/, (m, n) => `· ${pl(n, 'turn')}`],
+  [/^(\d+) 輪對話$/, (m, n) => pl(n, 'turn')], [/^(\d+) 個子卡片$/, (m, n) => pl(n, 'child card')], [/^(\d+) 個延伸問題$/, (m, n) => pl(n, 'follow-up')], [/^(\d+) 字$/, (m, n) => pl(n, 'char')],
+  [/^Grok API（(.*)）$/, 'Grok API ($1)'], [/^✨ 由 Grok 改寫（(.*)）$/, (m, s) => `✨ Rewritten by Grok (${s.split('・').map(x => T(x)).join(' · ')})`], [/^無法載入 (.*)$/, 'Could not load $1'],
+  [/^需要先在「設定」填入 xAI API Key 才能生成(圖片|影片)$/, (m, k) => `Add an xAI API key in Settings to generate ${k === '圖片' ? 'images' : 'videos'}`], [/^影片生成失敗$/, 'Video generation failed'], [/^影片生成已過期$/, 'Video generation expired'],
+  [/^⚠︎ 圖解無法繪製，顯示原始碼：(.*)$/, '⚠︎ The diagram could not be drawn; showing the source: $1'], [/^▶ 在 YouTube 搜尋「(.*)」$/, '▶ Search YouTube for “$1”'], [/^(.*)（(\d+)）$/, '$1 ($2)'],
+  [/^(.*)（貼紙副本）$/, '$1 (sticky copy)'], [/^(.*)（副本）$/, '$1 (copy)'],
+];
+function T(s, vars) {
+  let out = s;
+  if (isEn() && typeof s === 'string' && CJK_RE.test(s)) {
+    const t = s.trim(), lead = s.slice(0, s.indexOf(t)), trail = s.slice(s.indexOf(t) + t.length);
+    let r = EN[t];
+    if (r === undefined) for (const [re, rep] of EN_RE) if (re.test(t)) { r = t.replace(re, rep); break; }
+    if (r === undefined && t.includes('・')) { const parts = t.split('・'); if (parts.length > 1 && parts.every(p => EN[p.trim()] !== undefined || EN_RE.some(([re]) => re.test(p.trim())))) r = parts.map(p => T(p.trim())).join(' · '); }
+    if (r !== undefined) out = lead + r + trail;
+  }
+  if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+  return out;
+}
+const DEFAULT_TITLES = ['新對話', '新分支', '新貼紙', 'New chat', 'New branch', 'New sticky', ''];
+const isDefaultTitle = (t) => DEFAULT_TITLES.includes(t || '');
+// ---- DOM translation (English mode only) ----
+const I18N_SKIP = '.answer, .q-bubble, .chip .txt, .choice-q, .tldr, .note-body, .outline-article, .kb-item > span:first-child, #kbTitle, .gt-name, .mmd, .media-ph, textarea, [contenteditable="true"], [data-i18n-skip], #lightbox .lb-panel';
+const I18N_ATTRS = ['title', 'placeholder', 'aria-label', 'alt'];
+const i18nText = new Map(), i18nAttr = new Map(); // node → original zh text ; element → { attr: original }
+const skipI18n = (el) => !el || el.matches?.('.card .head > .title') || !!el.closest?.(I18N_SKIP);
+function trText(n) { const p = n.parentElement; if (!p || skipI18n(p) || p.closest('script, style')) return; const v = n.nodeValue; if (!CJK_RE.test(v)) return; const t = T(v); if (t !== v) { if (!i18nText.has(n)) i18nText.set(n, v); n.nodeValue = t; } }
+function trAttr(el, a) { if (el.closest?.('[data-i18n-skip], .chip .txt')) return; const v = el.getAttribute(a); if (!v || !CJK_RE.test(v)) return;
+  const t = T(v); if (t !== v) { const o = i18nAttr.get(el) || {}; if (!(a in o)) o[a] = v; i18nAttr.set(el, o); el.setAttribute(a, t); } }
+function trTree(root) {
+  if (root.nodeType === 3) return trText(root); if (root.nodeType !== 1) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) trText(n);
+  for (const a of I18N_ATTRS) { if (root.hasAttribute?.(a)) trAttr(root, a); root.querySelectorAll(`[${a}]`).forEach(el => trAttr(el, a)); }
+}
+const i18nMO = new MutationObserver((muts) => { for (const m of muts) {
+  if (m.type === 'childList') m.addedNodes.forEach(trTree); else if (m.type === 'characterData') trText(m.target); else if (m.type === 'attributes') trAttr(m.target, m.attributeName); } });
+const EN_HTML = { helpPop: "<div><b>Right-click</b>: menus to create a new chat / sticky, branch, link, tidy and more</div>\n        <div><b>Blank sticky</b>: create one with \u201cNew sticky\u201d above or the right-click menu; click its content to edit; paste text, links or images; plain text supports Markdown; a new chat draft can be switched to a sticky in its title bar</div>\n        <div><b>Double-click</b>: zoom in&ensp;·&ensp;<b>Double right-click</b> (or Alt/Option + double-click): zoom out&ensp;·&ensp;<b>Double-click a title</b>: rename</div>\n        <div><b>+ on the card edges</b>: click to open a branch chat on that side; drag onto another card (or right-click \u201cLink to\u2026\u201d) to create a link</div>\n        <div><b>Select an arrow</b>, then press \u00d7 / Delete, or right-click it: remove the link (undoable); recolor it when selected or from the right-click menu (branches and links alike)</div>\n        <div><b>Wheel / pinch</b>: zoom&ensp;·&ensp;<b>Drag empty space / two-finger scroll / Space + drag / middle-mouse drag</b>: pan</div>\n        <div><b>Shift + drag empty space</b> (or right-click \u201cMarquee select\u201d): select several cards; <b>Shift + click a card</b>: add to / remove from the selection; click empty space or Esc to clear. Drag any selected card\u2019s title bar to move them together; right-click to <b>create a group</b>, recolor, collapse / expand, remove from group or delete; drag a group\u2019s tab to move the whole group, right-click a group to recolor / rename / ungroup</div>\n        <div><b>\ud83c\udfa8 at a card\u2019s top right</b>: card color&ensp;·&ensp;<b>Hover a card</b>: it becomes the active card; the wheel scrolls its conversation and typing goes straight into a follow-up question</div>", setVars: "Variables (click to insert): <code data-var-target=\"setPrompt\" data-var=\"{{kb}}\">{{kb}}</code> knowledge base name&ensp;·&ensp;<code data-var-target=\"setPrompt\" data-var=\"{{scope}}\">{{scope}}</code> cluster root card title or \u201cWhole knowledge base\u201d&ensp;·&ensp;<code data-var-target=\"setPrompt\" data-var=\"{{today}}\">{{today}}</code> today\u2019s date&ensp;·&ensp;<code data-var-target=\"setPrompt\" data-var=\"{{count}}\">{{count}}</code> number of cards in scope&ensp;·&ensp;<code data-var-target=\"setPrompt\" data-var=\"{{style}}\">{{style}}</code> writing preferences (appended at the end when the prompt does not contain this variable)<br>The notes are sent in the user message in a structured &lt;notes&gt;/&lt;card&gt; format; no need to describe them in the prompt.", kbpVars: "Variables (click to insert): <code data-var-target=\"kbpPrompt\" data-var=\"{{kb}}\">{{kb}}</code> knowledge base name&ensp;·&ensp;<code data-var-target=\"kbpPrompt\" data-var=\"{{scope}}\">{{scope}}</code> cluster root card title or \u201cWhole knowledge base\u201d&ensp;·&ensp;<code data-var-target=\"kbpPrompt\" data-var=\"{{today}}\">{{today}}</code> today\u2019s date&ensp;·&ensp;<code data-var-target=\"kbpPrompt\" data-var=\"{{count}}\">{{count}}</code> number of cards in scope&ensp;·&ensp;<code data-var-target=\"kbpPrompt\" data-var=\"{{style}}\">{{style}}</code> writing preferences (appended at the end when the prompt does not contain this variable)<br>The notes are sent in the user message in a structured &lt;notes&gt;/&lt;card&gt; format; no need to describe them in the prompt." }; const zhHtml = {}; // id → English innerHTML for blocks with mixed markup (help, settings hints) — filled below
+const nativeConfirm = window.confirm.bind(window), nativePrompt = window.prompt.bind(window), nativeAlert = window.alert.bind(window);
+window.confirm = (m) => nativeConfirm(T(String(m ?? ''))); window.prompt = (m, d) => nativePrompt(T(String(m ?? '')), d); window.alert = (m) => nativeAlert(T(String(m ?? '')));
+function applyLangDom() {
+  document.documentElement.lang = isEn() ? 'en' : 'zh-Hant-TW'; document.documentElement.classList.toggle('lang-en', isEn());
+  document.title = isEn() ? 'Grok Mindmap Knowledge Base' : 'Grok 心智圖知識庫';
+  document.querySelectorAll('.wm-tag').forEach(el => el.textContent = isEn() ? 'Knowledge · Mindmap' : 'Mindmap · Knowledge');
+  document.querySelectorAll('.wm-name').forEach(el => { el.setAttribute('data-i18n-skip', ''); el.textContent = isEn() ? 'Mindmap KB' : '心智圖知識庫'; });
+  for (const id in EN_HTML) { const el = document.getElementById(id); if (!el) continue; if (isEn()) { if (!(id in zhHtml)) zhHtml[id] = el.innerHTML; el.innerHTML = EN_HTML[id]; } else if (id in zhHtml) { el.innerHTML = zhHtml[id]; delete zhHtml[id]; } }
+  i18nMO.disconnect();
+  if (isEn()) { trTree(document.body); i18nMO.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: I18N_ATTRS }); }
+  else { for (const [n, v] of i18nText) if (n.isConnected) n.nodeValue = v; for (const [el, o] of i18nAttr) if (el.isConnected) for (const a in o) el.setAttribute(a, o[a]); i18nText.clear(); i18nAttr.clear(); }
+  document.querySelectorAll('[data-lang-pick]').forEach(el => { if (el.tagName === 'SELECT') el.value = LANG; else el.textContent = isEn() ? '中文' : 'English'; });
+}
+
 // toasts stack (newest at the bottom, max TOAST_MAX visible); each keeps its own timer, so an earlier 復原 offer stays
 // until it expires. The newest toast carries id="toast".
 const TOAST_MAX = 3;
@@ -867,7 +1028,7 @@ function fenceBlock(lang, code) {
   if (lang === 'mermaid') {
     const h = hashStr(code); vizSrc.set(h, code);
     const c = mmdCache.get(h);
-    return `<figure class="mmd${c ? ' done' : ''}" data-h="${h}">${c ? mmdInner(h) : `<figcaption class="mmd-title">${esc(splitMermaid(code).title)}</figcaption><div class="mmd-loading"><span class="spinner"></span>圖解繪製中…</div>`}</figure>`;
+    return `<figure class="mmd${c ? ' done' : ''}" data-h="${h}">${c ? mmdInner(h) : `<figcaption class="mmd-title">${esc(splitMermaid(code).title)}</figcaption><div class="mmd-loading"><span class="spinner"></span>${T('圖解繪製中…')}</div>`}</figure>`;
   }
   if (lang === 'image' || lang === 'video') {
     const h = hashStr(lang + ':' + code.trim()); vizSrc.set(h, code.trim());
@@ -895,8 +1056,8 @@ function styleMermaid(src) {
 }
 function mmdInner(h) {
   const c = mmdCache.get(h); const title = c?.title ? `<figcaption class="mmd-title">${esc(c.title)}</figcaption>` : '';
-  if (c?.error) return title + `<div class="mmd-err">⚠︎ 圖解無法繪製，顯示原始碼：${esc(c.error)}</div><pre class="code"><code>${esc(vizSrc.get(h) || '')}</code></pre>`;
-  return title + `<div class="mmd-svg" title="點一下放大">${c.svg}</div>`;
+  if (c?.error) return title + `<div class="mmd-err">${esc(T('⚠︎ 圖解無法繪製，顯示原始碼：' + c.error))}</div><pre class="code"><code>${esc(vizSrc.get(h) || '')}</code></pre>`;
+  return title + `<div class="mmd-svg" title="${T('點一下放大')}">${c.svg}</div>`;
 }
 let mermaidReady = null, mmdSeq = 0, mmdQueue = Promise.resolve();
 function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('無法載入 ' + src)); document.head.appendChild(s); }); }
@@ -980,16 +1141,16 @@ function parseMediaSrc(kind, code) {
 }
 function mediaInner(h, kind) {
   const { prompt, search } = parseMediaSrc(kind, vizSrc.get(h) || ''); const rec = mediaMem.get(h);
-  const label = kind === 'image' ? '🖼️ 建議插圖' : '🎬 建議影片';
-  const yt = kind === 'video' ? `<a class="mp-yt" href="https://www.youtube.com/results?search_query=${encodeURIComponent(search)}" target="_blank" rel="noopener">▶ 在 YouTube 搜尋「${esc(search)}」</a>` : '';
+  const label = T(kind === 'image' ? '🖼️ 建議插圖' : '🎬 建議影片');
+  const yt = kind === 'video' ? `<a class="mp-yt" href="https://www.youtube.com/results?search_query=${encodeURIComponent(search)}" target="_blank" rel="noopener">${esc(T(`▶ 在 YouTube 搜尋「${search}」`))}</a>` : '';
   if (rec?.status === 'done') return kind === 'image'
     ? `<img class="mp-img" src="${esc(rec.src)}" alt="${esc(prompt)}" loading="lazy"><div class="mp-cap">${esc(prompt)}</div>`
-    : `<video class="mp-video" src="${esc(rec.src)}" controls playsinline preload="metadata"></video><div class="mp-cap">${esc(prompt)}　<a href="${esc(rec.src)}" target="_blank" rel="noopener">下載 ↗</a>（xAI 影片網址可能會過期）</div>${yt}`;
+    : `<video class="mp-video" src="${esc(rec.src)}" controls playsinline preload="metadata"></video><div class="mp-cap">${esc(prompt)}　<a href="${esc(rec.src)}" target="_blank" rel="noopener">${T('下載 ↗')}</a>${T('（xAI 影片網址可能會過期）')}</div>${yt}`;
   const busy = rec?.status === 'pending';
-  const btn = `<button class="tb-btn primary" data-media-gen ${busy ? 'disabled' : ''}>${busy ? `<span class="spinner"></span>${kind === 'image' ? '生成中…' : '影片生成中（約需 1–3 分鐘）…'}` : (kind === 'image' ? '生成圖片' : '生成影片')}</button>`;
+  const btn = `<button class="tb-btn primary" data-media-gen ${busy ? 'disabled' : ''}>${busy ? `<span class="spinner"></span>${T(kind === 'image' ? '生成中…' : '影片生成中（約需 1–3 分鐘）…')}` : T(kind === 'image' ? '生成圖片' : '生成影片')}</button>`;
   return `<div class="mp-head">${label}</div><div class="mp-prompt">${esc(prompt)}</div>`
     + (rec?.status === 'error' ? `<div class="mp-err">⚠︎ ${esc(rec.error)}</div>` : '')
-    + `<div class="mp-row">${btn}<span class="mp-note">${hasKey() ? '點擊後才會呼叫 xAI（會計費）' : '需先在設定填入 xAI API Key'}</span></div>${yt}`;
+    + `<div class="mp-row">${btn}<span class="mp-note">${T(hasKey() ? '點擊後才會呼叫 xAI（會計費）' : '需先在設定填入 xAI API Key')}</span></div>${yt}`;
 }
 async function hydrateMedia(ph) {
   ph.classList.add('done'); const h = ph.dataset.h, kind = ph.dataset.kind;
@@ -1006,7 +1167,7 @@ const apiBase = () => settings.baseUrl.replace(/\/$/, '');
 const apiHeaders = () => ({ 'Content-Type': 'application/json', Authorization: 'Bearer ' + settings.apiKey.trim() });
 const videoPolls = new Set();
 async function genMedia(h, kind) {
-  if (!hasKey()) { toast('需要先在「設定」填入 xAI API Key 才能生成' + (kind === 'image' ? '圖片' : '影片')); return; }
+  if (!hasKey()) { toast(T('需要先在「設定」填入 xAI API Key 才能生成' + (kind === 'image' ? '圖片' : '影片'))); return; }
   const cur = mediaMem.get(h); if (cur?.status === 'pending') return;
   const { prompt } = parseMediaSrc(kind, vizSrc.get(h) || '');
   if (kind === 'image') {
@@ -1062,7 +1223,83 @@ const DEMO_DIAGRAM = ['```mermaid', '---', 'title: TinyURL 系統核心流程', 
   '  B -->|縮短 POST| C(產生唯一 ID)', '  C --> D(Base62 編碼)', '  D --> E[(寫入資料庫)]', '  E --> F([回傳短網址])',
   '  B -->|轉址 GET| G{短代碼是否存在？}', '  G -->|是| H(查快取／資料庫)', '  H --> I([302 轉址到原網址])', '  G -->|否| J([回傳 404])', '```'].join('\n');
 const DEMO_FIRST_LINE = 'TinyURL 的核心是把長網址映射到 **Base62** 短碼，並在讀多寫少的情境下維持低延遲與高可用。';
+const DEMO_DIAGRAM_EN = ['```mermaid', '---', 'title: TinyURL core flow', '---', 'flowchart TD',
+  '  A([User request]) --> B(API server)',
+  '  B -->|Shorten POST| C(Generate unique ID)', '  C --> D(Base62 encode)', '  D --> E[(Write to DB)]', '  E --> F([Return short URL])',
+  '  B -->|Redirect GET| G{Short code exists?}', '  G -->|Yes| H(Check cache / DB)', '  H --> I([302 to original URL])', '  G -->|No| J([Return 404])', '```'].join('\n');
+function seedEn() {
+  const kb1 = uid('kb'), kb2 = uid('kb');
+  const c1 = uid('card'), c2 = uid('card'), c3 = uid('card');
+  const now = Date.now();
+  return {
+    version: 2, ui: { leftCollapsed: false }, links: [], groups: [], currentKbId: kb1, demoDiagram: true,
+    kbs: [
+      { id: kb1, name: 'System Design', icon: '🏗️', createdAt: now, viewport: { x: 40, y: 30, z: 0.9 } },
+      { id: kb2, name: 'Machine Learning', icon: '🧠', createdAt: now, viewport: { x: 60, y: 60, z: 1 } },
+    ],
+    cards: {
+      [c1]: {
+        id: c1, kbId: kb1, parentId: null, x: 40, y: 40, collapsed: false, status: 'active', createdAt: now,
+        title: 'TinyURL design trade-offs and variables',
+        turns: [
+          turn('What are the key trade-offs and variables when designing TinyURL?', `At its core, TinyURL maps a long URL to a short **Base62** code and keeps latency low and availability high under a read-heavy workload.
+
+${DEMO_DIAGRAM_EN}
+
+Shortening (writes) and redirecting (reads) are two separate paths: reads usually outnumber writes 100 to 1 or more, so the redirect path checks the cache first.
+
+**Redirects: 301 vs 302**
+
+| 301 Moved Permanently | 302 Found (temporary) |
+|---|---|
+| Browsers cache it; server load is minimal | Every click reaches the server, so analytics are precise |
+| No click counts or referrer data | The server must absorb more read traffic |
+
+Under **Variables & Impacts**: if the read/write ratio swings from 100:1 to 1:1 (say, a burst of writes), the cache-aside setup with LRU starts missing constantly and the writes hit the database directly — a write buffer queue (e.g. Kafka) is then needed to smooth the peaks. Another key variable is the short-code length: cutting Base62 codes from 7 to 5 characters shrinks the space from 62^7 (about 3.5 trillion) to 62^5 (about 916 million), saving storage and bandwidth but raising the long-term risk of exhaustion and collisions.`, 'done', now),
+          turn('So in practice, how do I choose between 301 and 302?', `- **Marketing / analytics** first (you need to know who clicked and from where) → use **302**, with CDN edge nodes absorbing the read traffic.
+- **Pure redirects at the lowest cost** → use **301**, but you can no longer change the destination or count clicks.
+- A middle ground: default to 302, and switch popular links whose campaign has ended to 301 with a longer \`Cache-Control\`.`, 'done', now + 1),
+        ],
+        tldrTurns: 2,
+        tldr: 'Base62 short codes; the read/write ratio and code length are the key variables; 302 for analytics, 301 to save traffic, or switch over a link’s lifetime.',
+        followUps: ['If the short codes run out, how should the system scale?', 'How do I design a distributed ID generator without a single point of failure?', 'How do I architect log collection when click analytics explode?', 'How do I protect the database during a cache avalanche?'],
+        grokUrl: '',
+      },
+      [c2]: {
+        id: c2, kbId: kb1, parentId: c1, sourceFollowUp: 'How do I design a distributed ID generator without a single point of failure?', x: 620, y: 300, collapsed: false, status: 'active', createdAt: now + 2,
+        title: 'Designing a distributed ID generator',
+        turns: [turn('How do I design a distributed ID generator without a single point of failure?', `There are three common approaches:
+
+1. **Snowflake**: 64 bits = 1 sign bit + 41-bit timestamp + 10-bit machine ID + 12-bit sequence; one machine can issue 4,096 IDs per millisecond, roughly increasing, with no central coordination.
+2. **Segment mode**: each service grabs a block of IDs from the database (e.g. 1,000 at a time) and hands them out from memory, so database load is tiny; a double buffer avoids stalls while fetching the next block.
+3. **UUID v7**: a time-ordered 128-bit UUID that needs no coordination at all, but it is long and not suitable as a short code directly.
+
+For TinyURL, use Snowflake or segments to produce increasing integers, then convert them to Base62 codes. Machine IDs can be assigned by ZooKeeper / etcd to avoid manual conflicts.`, 'done', now + 2)],
+        tldrTurns: 1,
+        tldr: 'Snowflake, segments or UUID v7; for TinyURL, increasing IDs converted to Base62, with machine IDs assigned by etcd/ZK.',
+        followUps: ['How do I handle clock drift in Snowflake?', 'What are the pros and cons of UUID v7 versus Snowflake?', 'How can machine IDs be assigned automatically on Kubernetes?', 'What if short URLs must be globally strictly increasing?'],
+        grokUrl: '',
+      },
+      [c3]: {
+        id: c3, kbId: kb2, parentId: null, x: 60, y: 60, collapsed: false, status: 'active', createdAt: now + 3,
+        title: 'Attention in Transformers',
+        turns: [turn('How does self-attention in a Transformer work?', `Self-attention lets every token in a sequence gather information from the other tokens, weighted by how relevant they are:
+
+- Each token is projected into a **Q (query)**, **K (key)** and **V (value)**
+- Weights = softmax(QKᵀ / √d), then multiplied by V
+- **Multi-head** attention lets the model attend to different relationships in different subspaces at the same time
+
+The cost is O(n²), so long contexts need optimisations such as FlashAttention or sparse attention.`, 'done', now + 3)],
+        tldrTurns: 1,
+        tldr: 'Q·K scores relevance, softmax weights V; multiple heads capture different relations; O(n²) cost.',
+        followUps: ['Why divide by √d?', 'How does FlashAttention reduce memory use?', 'How do multi-head and multi-query attention differ?'],
+        grokUrl: '',
+      },
+    },
+  };
+}
 function seed() {
+  if (isEn()) return seedEn();
   const kb1 = uid('kb'), kb2 = uid('kb');
   const c1 = uid('card'), c2 = uid('card'), c3 = uid('card');
   const now = Date.now();
@@ -1241,12 +1478,19 @@ function parseJson(text) {
 }
 
 // Editable part (settings → 回答提示詞); same text as prompts/answer-default.md
-const DEFAULT_ANSWER_PROMPT = "你是一位耐心的學習教練，使用繁體中文回答。使用者正在用「心智圖知識庫」逐步學習：每張卡片是一段多輪對話，卡片可以從父卡片分支出來；前面的訊息是父卡片與這張卡片先前的對話。\n\n## 回答原則\n- 回答使用者的最後一個問題；先給結論，再展開說明。\n- 善用 Markdown：粗體標出關鍵字、條列步驟、程式碼用 ``` 區塊。\n- 專有名詞第一次出現時，用一句話簡短解釋。\n- 不確定的內容直接說不確定，不要編造數字或出處。\n\n## 視覺輔助（主動判斷，有幫助才加）\n當圖像化能明顯幫助理解時，主動加入視覺輔助；純概念解釋、很短的回答或閒聊就不要加。每則回答最多 1–2 個。\n\n### 1. 圖解（Mermaid）\n適用：流程、系統架構、決策邏輯、元件之間的時序互動、狀態轉換、概念階層。\n- 使用 ```mermaid 區塊，開頭用 frontmatter 寫圖的標題：\n  ---\n  title: TinyURL 系統核心流程\n  ---\n- 圖種：流程／架構／決策用 `flowchart TD`（步驟多且偏橫向時用 `flowchart LR`）；請求往返用 `sequenceDiagram`；生命週期用 `stateDiagram-v2`；概念階層用 `mindmap`。\n- flowchart 形狀約定：開始／結束用體育場形 `A([使用者請求])`；處理步驟用圓角矩形 `B(API 伺服器)`；判斷用菱形 `C{短代碼是否存在？}`；資料儲存可用 `D[(資料庫)]`。\n- 連線加上簡短標籤並寫在線上：`B -->|轉址 GET| C`；判斷的分支標 `是`／`否`。\n- 節點文字要短（約 2–8 個中文字，可保留 API、GET 等英文術語），全圖最多約 12 個節點。\n- 不要加 style、classDef、linkStyle、顏色或 %%{init}%% 設定——介面會自動套用統一的圖解樣式。\n- 介面的圖解樣式是「法式編輯風」：象牙色面板、襯線標題配一道金色細線、1.25px 墨藍細線外框、淡灰藍圓角節點、淡金判斷菱形、鼠尾草／玫瑰／沙色輔色、正交連線——像清楚俐落的 Claude 圖解，不是手繪草圖；所以請把結構與層次排清楚，讓細線風格也一目了然。\n- 節點文字含括號、引號、斜線等特殊字元時，用雙引號包起來，例如 `E(\"回傳 301/302\")`。\n- 圖解之後用 1–2 句話點出重點，不要只丟一張圖。\n\n### 2. 表格\n比較多個方案、權衡取捨、參數或規格對照時，用 Markdown 表格（例：方案｜優點｜缺點｜適用情境）；欄位精簡、每格一句話。\n\n### 3. 插圖（少用）\n只有在「看到實物或畫面」才容易理解、而且無法用圖解表達時（例如硬體外觀、生物構造、地理景觀、藝術風格），才加入 ```image 區塊，內容是一段給圖片生成模型的英文提示詞（主體、構圖、風格，60 字以內）；除非主題需要寫實照片，風格預設與介面一致：elegant editorial illustration, soft Monet-like light, subtle Seurat pointillist texture, warm cream with muted gold, blue-grey and sage tones。使用者要手動點擊才會生成。\n\n### 4. 影片（很少用）\n只有在「動態過程」看影片明顯比讀文字好懂時（例如物理現象、操作手法、動畫演示），才加入 ```video 區塊：第一行是給影片生成模型的英文提示詞（描述約 6 秒的畫面），第二行寫 `search: YouTube 搜尋關鍵字`。";
+const DEFAULT_ANSWER_PROMPT_ZH = "你是一位耐心的學習教練，使用繁體中文回答。使用者正在用「心智圖知識庫」逐步學習：每張卡片是一段多輪對話，卡片可以從父卡片分支出來；前面的訊息是父卡片與這張卡片先前的對話。\n\n## 回答原則\n- 回答使用者的最後一個問題；先給結論，再展開說明。\n- 善用 Markdown：粗體標出關鍵字、條列步驟、程式碼用 ``` 區塊。\n- 專有名詞第一次出現時，用一句話簡短解釋。\n- 不確定的內容直接說不確定，不要編造數字或出處。\n\n## 視覺輔助（主動判斷，有幫助才加）\n當圖像化能明顯幫助理解時，主動加入視覺輔助；純概念解釋、很短的回答或閒聊就不要加。每則回答最多 1–2 個。\n\n### 1. 圖解（Mermaid）\n適用：流程、系統架構、決策邏輯、元件之間的時序互動、狀態轉換、概念階層。\n- 使用 ```mermaid 區塊，開頭用 frontmatter 寫圖的標題：\n  ---\n  title: TinyURL 系統核心流程\n  ---\n- 圖種：流程／架構／決策用 `flowchart TD`（步驟多且偏橫向時用 `flowchart LR`）；請求往返用 `sequenceDiagram`；生命週期用 `stateDiagram-v2`；概念階層用 `mindmap`。\n- flowchart 形狀約定：開始／結束用體育場形 `A([使用者請求])`；處理步驟用圓角矩形 `B(API 伺服器)`；判斷用菱形 `C{短代碼是否存在？}`；資料儲存可用 `D[(資料庫)]`。\n- 連線加上簡短標籤並寫在線上：`B -->|轉址 GET| C`；判斷的分支標 `是`／`否`。\n- 節點文字要短（約 2–8 個中文字，可保留 API、GET 等英文術語），全圖最多約 12 個節點。\n- 不要加 style、classDef、linkStyle、顏色或 %%{init}%% 設定——介面會自動套用統一的圖解樣式。\n- 介面的圖解樣式是「法式編輯風」：象牙色面板、襯線標題配一道金色細線、1.25px 墨藍細線外框、淡灰藍圓角節點、淡金判斷菱形、鼠尾草／玫瑰／沙色輔色、正交連線——像清楚俐落的 Claude 圖解，不是手繪草圖；所以請把結構與層次排清楚，讓細線風格也一目了然。\n- 節點文字含括號、引號、斜線等特殊字元時，用雙引號包起來，例如 `E(\"回傳 301/302\")`。\n- 圖解之後用 1–2 句話點出重點，不要只丟一張圖。\n\n### 2. 表格\n比較多個方案、權衡取捨、參數或規格對照時，用 Markdown 表格（例：方案｜優點｜缺點｜適用情境）；欄位精簡、每格一句話。\n\n### 3. 插圖（少用）\n只有在「看到實物或畫面」才容易理解、而且無法用圖解表達時（例如硬體外觀、生物構造、地理景觀、藝術風格），才加入 ```image 區塊，內容是一段給圖片生成模型的英文提示詞（主體、構圖、風格，60 字以內）；除非主題需要寫實照片，風格預設與介面一致：elegant editorial illustration, soft Monet-like light, subtle Seurat pointillist texture, warm cream with muted gold, blue-grey and sage tones。使用者要手動點擊才會生成。\n\n### 4. 影片（很少用）\n只有在「動態過程」看影片明顯比讀文字好懂時（例如物理現象、操作手法、動畫演示），才加入 ```video 區塊：第一行是給影片生成模型的英文提示詞（描述約 6 秒的畫面），第二行寫 `search: YouTube 搜尋關鍵字`。";
 // Fixed output contract, always appended so a custom prompt can't break parsing
-const ANSWER_JSON_CONTRACT = `## 輸出格式（固定）
+const ANSWER_JSON_CONTRACT_ZH = `## 輸出格式（固定）
 只回傳一個 JSON 物件，不要加任何其他文字：
 {"title": "15 字內的卡片標題（概括這張卡片整段對話）", "answer": "Markdown 格式的完整回答（含上述的圖解／表格／插圖／影片區塊；JSON 字串中的換行寫成 \\n）", "followUps": ["3~4 個根據最新回答、能延伸學習且彼此不重複的後續問題"]}`;
-const answerSystem = () => (settings.answerPrompt || DEFAULT_ANSWER_PROMPT).trim() + '\n\n' + ANSWER_JSON_CONTRACT;
+const DEFAULT_ANSWER_PROMPT_EN = "You are a patient learning coach. Always answer in English. The user is learning step by step in \"Mindmap Knowledge Base\": each card is a multi-turn conversation, and a card can branch off a parent card; the earlier messages are the parent card's conversation and this card's previous turns.\n\n## Answering principles\n- Answer the user's last question; give the conclusion first, then explain.\n- Use Markdown well: bold the key terms, list steps, put code in ``` blocks.\n- When a technical term first appears, explain it briefly in one sentence.\n- If you are not sure about something, say so; never invent numbers or sources.\n\n## Visual aids (use your judgement; add them only when they help)\nWhen a visual clearly helps understanding, add one proactively; skip it for purely conceptual explanations, very short answers or small talk. At most 1\u20132 per answer.\n\n### 1. Diagrams (Mermaid)\nFor: processes, system architecture, decision logic, timing of interactions between components, state transitions, concept hierarchies.\n- Use a ```mermaid block and put the diagram title in frontmatter at the top:\n  ---\n  title: TinyURL core flow\n  ---\n- Diagram types: `flowchart TD` for processes / architecture / decisions (`flowchart LR` when there are many steps laid out horizontally); `sequenceDiagram` for request round trips; `stateDiagram-v2` for lifecycles; `mindmap` for concept hierarchies.\n- Flowchart shape conventions: start / end as a stadium `A([User request])`; processing steps as rounded rectangles `B(API server)`; decisions as diamonds `C{Short code exists?}`; data stores may use `D[(Database)]`.\n- Give edges a short label on the line: `B -->|Redirect GET| C`; label decision branches `Yes` / `No`.\n- Keep node text short (about 1\u20134 words), at most about 12 nodes per diagram.\n- Do not add style, classDef, linkStyle, colours or %%{init}%% settings \u2014 the interface applies a consistent diagram style automatically.\n- The interface's diagram style is \"French editorial\": ivory panels, serif titles with a thin gold rule, 1.25px ink-navy outlines, pale blue-grey rounded nodes, pale gold decision diamonds, sage / rose / sand accents, orthogonal edges \u2014 like a crisp, clean explainer diagram, not a hand-drawn sketch; so lay out the structure and hierarchy clearly so the thin-line style reads at a glance.\n- Wrap node text that contains brackets, quotes or slashes in double quotes, e.g. `E(\"Return 301/302\")`.\n- After a diagram, point out the key takeaway in 1\u20132 sentences; never just drop a diagram.\n\n### 2. Tables\nWhen comparing options, trade-offs, parameters or specs, use a Markdown table (e.g. Option | Pros | Cons | When to use); keep columns lean, one sentence per cell.\n\n### 3. Illustrations (use sparingly)\nOnly when something is easier to understand by \"seeing the object or scene\" and cannot be expressed as a diagram (e.g. hardware, anatomy, landscapes, art styles), add an ```image block containing an English prompt for an image-generation model (subject, composition, style; under 60 words). Unless the topic needs a realistic photo, default to the interface's style: elegant editorial illustration, soft Monet-like light, subtle Seurat pointillist texture, warm cream with muted gold, blue-grey and sage tones. The user has to click to generate it.\n\n### 4. Video (rarely)\nOnly when a dynamic process is clearly easier to grasp as video than as text (e.g. physical phenomena, hands-on techniques, animated demonstrations), add a ```video block: the first line is an English prompt for a video-generation model (describing about 6 seconds of footage), the second line is `search: YouTube search keywords`.";
+const ANSWER_JSON_CONTRACT_EN = `## Output format (fixed)
+Return exactly one JSON object and nothing else:
+{"title": "a card title of at most 6 words (summarising the card's whole conversation)", "answer": "the full answer in Markdown (including any diagram / table / illustration / video blocks described above; write newlines inside the JSON string as \\n)", "followUps": ["3–4 non-overlapping follow-up questions, based on the latest answer, that extend the learning"]}
+Write the title, answer and followUps in English.`;
+let DEFAULT_ANSWER_PROMPT = DEFAULT_ANSWER_PROMPT_ZH, ANSWER_JSON_CONTRACT = ANSWER_JSON_CONTRACT_ZH;
+const LANG_NOTE = () => isEn() ? '\n\nAlways reply in English.' : '';
+const answerSystem = () => (settings.answerPrompt || DEFAULT_ANSWER_PROMPT).trim() + (settings.answerPrompt ? LANG_NOTE() : '') + '\n\n' + ANSWER_JSON_CONTRACT;
 
 function historyFor(card) {
   const msgs = [];
@@ -1264,9 +1508,15 @@ async function generateTurn(card, question) {
   return { title: out.title, answer: out.answer, followUps: (out.followUps || []).slice(0, 4) };
 }
 
-const topicOf = (q) => q.replace(/[？?。！!]/g, '').replace(/^(那|所以)?(如何|怎麼|為什麼|為何|什麼是|請問|該如何)/, '').replace(/(該如何解決|如何|是什麼|有什麼|該怎麼設計|怎麼做)$/, '').trim().slice(0, 16) || q;
+const topicOf = (q) => isEn() ? (q.replace(/[?.!]+$/, '').replace(/^(so |then |and )?(how (do|does|can|should) (i|we|you) |how |why |what is |what are |what )/i, '').trim().slice(0, 40) || q) : q.replace(/[？?。！!]/g, '').replace(/^(那|所以)?(如何|怎麼|為什麼|為何|什麼是|請問|該如何)/, '').replace(/(該如何解決|如何|是什麼|有什麼|該怎麼設計|怎麼做)$/, '').trim().slice(0, 16) || q;
 function mockVisual(question, topic) { // demo mode: show what proactive visuals look like
   const F = '`'.repeat(3);
+  if (isEn()) {
+    if (/flow|architect|step|work|design|how/i.test(question)) return `\n\n${F}mermaid\n---\ntitle: ${topic}: process\n---\nflowchart TD\n  A([Requirement]) --> B(Clarify constraints)\n  B --> C{Large scale?}\n  C -->|Yes| D(Distributed design)\n  C -->|No| E(Single node)\n  D --> F([Ship and monitor])\n  E --> F\n${F}\n\nConfirm the scale first, then decide whether the distributed complexity is worth it.`;
+    if (/look like|appearance|image|photo/i.test(question)) return `\n\n${F}image\nA clean, well-lit illustration of ${topic}, isometric view, soft pastel colors, white background\n${F}`;
+    if (/video|demo|animation/i.test(question)) return `\n\n${F}video\nA short animated explainer showing ${topic} step by step, clean flat style\nsearch: ${topic} animation explained\n${F}`;
+    return '';
+  }
   if (/流程|架構|步驟|運作|設計|怎麼做|如何/.test(question)) return `\n\n${F}mermaid\n---\ntitle: ${topic}：處理流程\n---\nflowchart TD\n  A([收到需求]) --> B(釐清限制條件)\n  B --> C{規模是否很大？}\n  C -->|是| D(分散式方案)\n  C -->|否| E(單機方案)\n  D --> F([上線並監控])\n  E --> F\n${F}\n\n先確認規模，再決定要不要承擔分散式的複雜度。`;
   if (/長什麼樣|外觀|圖片|照片/.test(question)) return `\n\n${F}image\nA clean, well-lit illustration of ${topic}, isometric view, soft pastel colors, white background\n${F}`;
   if (/影片|示範|動畫|演示/.test(question)) return `\n\n${F}video\nA short animated explainer showing ${topic} step by step, clean flat style\nsearch: ${topic} 動畫 解說\n${F}`;
@@ -1275,6 +1525,11 @@ function mockVisual(question, topic) { // demo mode: show what proactive visuals
 function mockTurn(card, question) {
   const topic = topicOf(question);
   const done = card.turns.filter(t => t.status === 'done').map(t => topicOf(t.q));
+  if (isEn()) return new Promise(r => setTimeout(() => r({
+    title: card.turns.length <= 1 ? question.replace(/[?]$/, '').slice(0, 40) : undefined,
+    answer: `> Demo mode: no xAI API key is set, so this is sample content.\n\nYou can look at “**${question}**”${done.length ? ` (continuing the ${pl(done.length, 'earlier turn')} in this card)` : ''} on three levels:\n\n1. **Core idea**: first pin down the problem ${topic} solves and its constraints.\n2. **Common approaches**: compare two or three mainstream options, with their pros, cons and the scale each suits.\n3. **Trade-offs**: balance latency, cost, consistency and operational complexity.\n\n| Aspect | Focus |\n|---|---|\n| Performance | Where the hot spots and bottlenecks are |\n| Reliability | Single points of failure and fallback strategy |` + mockVisual(question, topic),
+    followUps: [`What is the core principle behind ${topic}?`, `What are the common trade-offs of ${topic}?`, `How do you put ${topic} into practice?`, `What are the most common pitfalls with ${topic}?`],
+  }), 700));
   return new Promise(r => setTimeout(() => r({
     title: card.turns.length <= 1 ? question.replace(/[？?]$/, '').slice(0, 20) : undefined,
     answer: `> 示範模式：尚未設定 xAI API Key，以下為假資料。\n\n關於「**${question}**」${done.length ? `（延續本卡片前 ${done.length} 輪對話）` : ''}，可以從三個層面理解：\n\n1. **核心概念**：先釐清 ${topic} 要解決的問題與限制條件。\n2. **常見做法**：比較兩到三種主流方案，各自的優缺點與適用規模。\n3. **權衡取捨**：延遲、成本、一致性與維運複雜度之間的平衡。\n\n| 面向 | 重點 |\n|---|---|\n| 效能 | 熱點與瓶頸在哪裡 |\n| 可靠性 | 單點故障與降級策略 |` + mockVisual(question, topic),
@@ -1286,7 +1541,9 @@ function mockTurn(card, question) {
    Generated only the first time a card is collapsed (or via ↻). Stale when new turns arrive afterwards. */
 const doneTurns = (c) => c.turns.filter(t => t.status === 'done');
 const tldrStale = (c) => !!c.tldr && doneTurns(c).length > (c.tldrTurns ?? doneTurns(c).length);
-const TLDR_SYS = '你是學習筆記助理。請用繁體中文，以 60 字以內的一句話，總結使用者提供的這張學習卡片「所有問答」的重點。只輸出摘要本身，不要加引號、標題或前綴。';
+const TLDR_SYS_ZH = '你是學習筆記助理。請用繁體中文，以 60 字以內的一句話，總結使用者提供的這張學習卡片「所有問答」的重點。只輸出摘要本身，不要加引號、標題或前綴。';
+const TLDR_SYS_EN = 'You are a study-notes assistant. In English, summarise the key points of ALL the Q&A on the learning card the user provides in a single sentence of at most 30 words. Output only the summary itself — no quotes, heading or prefix.';
+const tldrSys = () => isEn() ? TLDR_SYS_EN : TLDR_SYS_ZH;
 const tldrLoading = new Set();
 let tldrActive = 0; const tldrQueue = [];
 function pumpTldr() { while (tldrActive < 2 && tldrQueue.length) { const job = tldrQueue.shift(); tldrActive++; job().finally(() => { tldrActive--; pumpTldr(); }); } }
@@ -1301,10 +1558,10 @@ function requestTldr(card, force) {
       let text;
       if (!hasKey()) {
         const topics = turns.map(t => topicOf(t.q));
-        text = await new Promise(r => setTimeout(() => r(`本卡涵蓋 ${topics.length} 個問題：${topics.join('、')}`.slice(0, 52) + '。（示範）'), 500));
+        text = await new Promise(r => setTimeout(() => r(isEn() ? `This card covers ${pl(topics.length, 'question')}: ${topics.join(', ')}`.slice(0, 110) + '. (demo)' : `本卡涵蓋 ${topics.length} 個問題：${topics.join('、')}`.slice(0, 52) + '。（示範）'), 500));
       } else {
-        const body = `卡片標題：${card.title}\n\n` + turns.map((t, i) => `【第 ${i + 1} 輪】\n問：${t.q}\n答：${stripDemo(t.a)}`).join('\n\n');
-        text = (await chat([{ role: 'system', content: TLDR_SYS }, { role: 'user', content: body }], { convId: rootOf(card).id })).trim().replace(/^["「]|["」]$/g, '');
+        const body = isEn() ? `Card title: ${card.title}\n\n` + turns.map((t, i) => `[Turn ${i + 1}]\nQ: ${t.q}\nA: ${stripDemo(t.a)}`).join('\n\n') : `卡片標題：${card.title}\n\n` + turns.map((t, i) => `【第 ${i + 1} 輪】\n問：${t.q}\n答：${stripDemo(t.a)}`).join('\n\n');
+        text = (await chat([{ role: 'system', content: tldrSys() }, { role: 'user', content: body }], { convId: rootOf(card).id })).trim().replace(/^["「]|["」]$/g, '');
       }
       card.tldr = text; card.tldrTurns = turns.length; card.tldrAt = Date.now();
     } catch (e) { card.tldrError = e.message; }
@@ -1321,7 +1578,7 @@ async function askOnCard(card, question, existingTurn) {
   t.status = 'loading'; t.error = '';
   if (!existingTurn) card.turns.push(t);
   card.status = 'active';
-  if (!card.title || card.title === '新對話') card.title = question.replace(/[？?]$/, '').slice(0, 24);
+  if (isDefaultTitle(card.title)) card.title = question.replace(/[？?]$/, '').slice(0, 24);
   chipChoice.delete(card.id);
   scrollToEnd.add(card.id); renderCard(card); save();
   try {
@@ -1379,7 +1636,7 @@ function createRootCard(at, kind) { checkpoint();
   const v = kb().viewport, rect = $('#canvas').getBoundingClientRect();
   const RES_H = 280, x0 = at ? at.x : (rect.width / 2 - v.x) / v.z - 220, y0 = at ? at.y : (rect.height / 3 - v.y) / v.z - 60;
   const { x, y } = freeSpot(Math.round(x0), Math.round(y0), 440, RES_H); // click point / view centre, nudged to the nearest free spot
-  const card = { id: uid('card'), kbId: state.currentKbId, parentId: null, x, y, collapsed: false, createdAt: Date.now(), ...newCardFields(kind, '新對話') };
+  const card = { id: uid('card'), kbId: state.currentKbId, parentId: null, x, y, collapsed: false, createdAt: Date.now(), ...newCardFields(kind, T('新對話')) };
   state.cards[card.id] = card; renderCard(card); renderKbList(); updateEmpty();
   settleCard(card, (w, h) => freeSpot(Math.round(x0), Math.round(y0), w, h, card.id), RES_H); save(); selectCard(card.id);
   if (!at) panToCard(card);
@@ -1445,11 +1702,11 @@ function deleteCard(card) { checkpoint();
   renderGroups(); springBackFrom(goneSB); drawEdges(); renderKbList(); refreshOutlineIfOpen(); save(); updateEmpty();
 }
 
-const stripDemo = (a) => (a || '').replace(/^> 示範模式.*\n\n/, '');
+const stripDemo = (a) => (a || '').replace(/^> (示範模式|Demo mode).*\n\n/, '');
 function cardMarkdown(c) {
   if (isNote(c)) return `## ${c.title}\n\n${c.noteTldr ? `**TL;DR：** ${c.noteTldr}\n\n` : ''}${noteToMd(c)}`;
   const turns = c.turns.map(t => `**Q：** ${t.q}\n\n${stripDemo(t.a)}`).join('\n\n---\n\n');
-  return `## ${c.title}\n\n${c.tldr ? `**TL;DR：** ${c.tldr}\n\n` : ''}${turns}\n\n後續問題：\n${(c.followUps || []).map(f => '- ' + f).join('\n')}${c.grokUrl ? `\n\nGrok 對話：${c.grokUrl}` : ''}`;
+  return `## ${c.title}\n\n${c.tldr ? `**TL;DR：** ${c.tldr}\n\n` : ''}${turns}\n\n${T('後續問題')}${isEn() ? ':' : '：'}\n${(c.followUps || []).map(f => '- ' + f).join('\n')}${c.grokUrl ? `\n\n${T('Grok 對話')}${isEn() ? ': ' : '：'}${c.grokUrl}` : ''}`;
 }
 
 /* ---------- v0.9 sticky notes (card.kind === 'note') ----------
@@ -1483,7 +1740,7 @@ function noteHtmlToMd(html) {
       case 'CODE': return '`' + c() + '`';
       case 'A': return n.getAttribute('href') ? `[${c()}](${n.getAttribute('href')})` : c();
       case 'BR': return '\n';
-      case 'IMG': return '（圖片）';
+      case 'IMG': return T('（圖片）');
       case 'H1': case 'H2': case 'H3': case 'H4': return `\n\n**${c().trim()}**\n\n`;
       case 'LI': return `\n- ${c().trim()}`;
       case 'UL': case 'OL': return c() + '\n\n';
@@ -1499,7 +1756,7 @@ function noteHtmlToMd(html) {
 const noteToMd = (c) => (c.noteMd || noteHtmlToMd(c.noteHtml)).trim();
 function noteTldr(c) { // user-set, else the first non-empty line / heading of the content
   if ((c.noteTldr || '').trim()) return c.noteTldr.trim();
-  const line = noteToMd(c).split('\n').map(l => l.replace(/^\s*(#{1,6}\s+|[-*+]\s+|\d+\.\s+|>\s*)/, '').replace(/\*\*|__|`|（圖片）/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').trim()).find(Boolean) || '';
+  const line = noteToMd(c).split('\n').map(l => l.replace(/^\s*(#{1,6}\s+|[-*+]\s+|\d+\.\s+|>\s*)/, '').replace(/\*\*|__|`|（圖片）|\(image\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').trim()).find(Boolean) || '';
   return line.length > 80 ? line.slice(0, 80) + '…' : line;
 }
 const NOTE_MD_RE = /^(#{1,6}\s|\s*[-*+]\s|\s*\d+\.\s|>\s|```|\|.*\|)|\*\*[^*]+\*\*|\[[^\]]+\]\(https?:/m;
@@ -1509,7 +1766,7 @@ function editNote(card) {
   const el = cardEls[card.id]; const nb = el?.querySelector('.note-body'); if (!nb || card.collapsed) return;
   if (noteEditing && noteEditing !== card.id) commitNote(state.cards[noteEditing]);
   noteEditing = card.id; el.classList.add('editing');
-  nb.innerHTML = '<div class="note-edit" contenteditable="true" spellcheck="false"></div><div class="note-hint">可直接貼上文字、連結、圖片；純文字支援 Markdown。點卡片外完成編輯・Esc 結束</div>';
+  nb.innerHTML = '<div class="note-edit" contenteditable="true" spellcheck="false"></div><div class="note-hint">' + T('可直接貼上文字、連結、圖片；純文字支援 Markdown。點卡片外完成編輯・Esc 結束') + '</div>';
   const ed = nb.querySelector('.note-edit');
   if (card.noteMd) { ed.classList.add('md'); ed.innerText = card.noteMd; } else { ed.innerHTML = card.noteHtml || ''; hydrateNoteImgs(ed); }
   ed.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(ed); r.collapse(false); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
@@ -1541,13 +1798,13 @@ async function pasteIntoNote(e, ed) {
   else { e.preventDefault(); document.execCommand('insertText', false, cd.getData('text/plain')); }
 }
 function newCardFields(kind, title) {
-  return kind === 'note' ? { kind: 'note', status: 'active', title: '新貼紙', noteHtml: '', turns: [], tldr: '', followUps: [], grokUrl: '' }
+  return kind === 'note' ? { kind: 'note', status: 'active', title: T('新貼紙'), noteHtml: '', turns: [], tldr: '', followUps: [], grokUrl: '' }
     : { status: 'draft', title, turns: [], tldr: '', followUps: [], grokUrl: '' };
 }
 function convertDraftToNote(card) { checkpoint();
   const q = (card.draftQ || '').trim(); delete card.draftQ; delete card.touched; freshDraft = null;
   Object.assign(card, { kind: 'note', status: 'active', noteHtml: q ? esc(q).replace(/\n/g, '<br>') : '' });
-  if (['新對話', '新分支', ''].includes(card.title || '')) card.title = '新貼紙';
+  if (isDefaultTitle(card.title)) card.title = T('新貼紙');
   renderCard(card); if (card.parentId && state.cards[card.parentId]) renderCard(state.cards[card.parentId]); renderKbList(); refreshOutlineIfOpen(); save();
   setTimeout(() => editNote(card), 30);
 }
@@ -1556,7 +1813,7 @@ function convertDraftToNote(card) { checkpoint();
 // edits made on the sticky (confirm first if it was edited; Ctrl+Z brings the sticky with its edits back).
 const CONV_FIELDS = ['turns', 'followUps', 'grokUrl', 'tldr', 'tldrTurns', 'tldrAt', 'status', 'askDraft'];
 const normMd = (t) => String(t || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
-const convToMd = (c) => c.turns.filter(t => t.status === 'done').map(t => `**Q：** ${t.q}\n\n${stripDemo(t.a)}`).join('\n\n---\n\n');
+const convToMd = (c) => c.turns.filter(t => t.status === 'done').map(t => `**Q${isEn() ? ':' : '：'}** ${t.q}\n\n${stripDemo(t.a)}`).join('\n\n---\n\n');
 function convertToNote(card) {
   if (isNote(card) || card.status === 'draft' || isBusy(card)) return; checkpoint(); if (noteEditing) commitNote(state.cards[noteEditing]);
   const orig = {}; for (const k of CONV_FIELDS) if (card[k] !== undefined) orig[k] = card[k];
@@ -1588,7 +1845,7 @@ function convertToConversation(card, opts = {}) {
 function duplicateNote(card, opts = {}) {
   if (!isNote(card)) return null; if (noteEditing === card.id) commitNote(card); checkpoint();
   const c = { id: uid('card'), kbId: card.kbId, parentId: null, x: card.x + 40, y: card.y + 40, collapsed: !!card.collapsed, createdAt: Date.now(), ...newCardFields('note'),
-    title: opts.link ? `${card.title}（貼紙副本）` : `${card.title}（副本）` };
+    title: T(opts.link ? '{t}（貼紙副本）' : '{t}（副本）', { t: card.title }).replace(/^\{t\}/, card.title) };
   for (const k of ['noteMd', 'noteHtml', 'noteTldr', 'color', 'w', 'h']) if (card[k] !== undefined) c[k] = card[k];
   if (c.noteMd) delete c.noteHtml;
   state.cards[c.id] = c; renderCard(c); placeAdjacent(c, card, 'right');
@@ -1654,19 +1911,19 @@ function renderCard(card) {
   let body = '';
   if (isNote(card) && card.collapsed) {
     const tl = noteTldr(card), n = noteToMd(card).replace(/\s/g, '').length;
-    body = `<div class="tldr-head"><span class="tldr-label">TL;DR</span>${card.noteTldr ? '<span class="tldr-stale" style="opacity:.75" title="自訂摘要">自訂</span>' : ''}<span class="grow"></span><button class="tldr-regen" data-act="note-tldr" title="自訂 TL;DR（留空 = 使用第一行）">✎ 自訂</button></div><div class="tldr">${tl ? esc(tl) : '（空白貼紙）'}</div>
+    body = `<div class="tldr-head"><span class="tldr-label">TL;DR</span>${card.noteTldr ? '<span class="tldr-stale" style="opacity:.75" title="自訂摘要">自訂</span>' : ''}<span class="grow"></span><button class="tldr-regen" data-act="note-tldr" title="自訂 TL;DR（留空 = 使用第一行）">✎ 自訂</button></div><div class="tldr">${tl ? esc(tl) : T('（空白貼紙）')}</div>
       <div class="meta"><span>${ico('note', 12)} 貼紙</span><span>${n} 字</span><span>${kids.length} 個子卡片</span></div>`;
   } else if (isNote(card)) {
     const empty = !card.noteMd && !(card.noteHtml || '').trim();
-    body = `<div class="thread note-body" data-note>${empty ? '<span class="note-ph">點這裡輸入，或直接貼上文字、連結、圖片……</span>' : `<div class="answer note-view">${card.noteMd ? md(card.noteMd) : card.noteHtml}</div>`}</div>`;
+    body = `<div class="thread note-body" data-note>${empty ? `<span class="note-ph">${T('點這裡輸入，或直接貼上文字、連結、圖片……')}</span>` : `<div class="answer note-view">${card.noteMd ? md(card.noteMd) : card.noteHtml}</div>`}</div>`;
   } else if (card.status === 'draft') {
     body = `<div class="draft"><textarea placeholder="想學什麼？輸入一個問題開始新的對話……">${esc(card.draftQ || '')}</textarea>
       <div class="row"><button class="tb-btn primary" data-act="start">開始 ${ico('send', 14)}</button></div></div>`;
   } else if (card.collapsed) {
     const gen = tldrLoading.has(card.id), stale = tldrStale(card);
-    const tl = gen ? '<span class="tldr-gen"><span class="spinner"></span>產生中…</span>'
+    const tl = gen ? `<span class="tldr-gen"><span class="spinner"></span>${T('產生中…')}</span>`
       : card.tldrError ? `<span style="color:var(--danger)">⚠︎ ${esc(card.tldrError)}</span>`
-      : card.tldr ? esc(card.tldr) : (doneTurns(card).length ? '（尚無摘要）' : '（尚無內容）');
+      : card.tldr ? esc(card.tldr) : T(doneTurns(card).length ? '（尚無摘要）' : '（尚無內容）');
     body = `<div class="tldr-head"><span class="tldr-label">TL;DR</span>${stale && !gen ? '<span class="tldr-stale" title="產生摘要後又新增了對話">已過期</span>' : ''}<span class="grow"></span>${doneTurns(card).length ? `<button class="tldr-regen" data-act="tldr-regen" title="重新產生 TL;DR" ${gen ? 'disabled' : ''}>↻ 重新產生</button>` : ''}</div><div class="tldr">${tl}</div>
       <div class="meta"><span>${card.turns.length} 輪對話</span><span>${kids.length} 個子卡片</span><span>${(card.followUps || []).length} 個延伸問題</span>${card.grokUrl ? `<span class="meta-grok">${ico('link', 12)} 已連結 Grok</span>` : ''}</div>`;
   } else {
@@ -1895,7 +2152,7 @@ function renderGroups() {
 function pruneGroups() { state.groups = state.groups.filter(g => (g.members = g.members.filter(id => state.cards[id])).length); }
 function createGroup(ids) { checkpoint();
   state.groups.forEach(g => g.members = g.members.filter(id => !ids.includes(id))); pruneGroups();
-  const g = { id: uid('grp'), kbId: state.currentKbId, name: '群組', color: null, members: [...ids], createdAt: Date.now() };
+  const g = { id: uid('grp'), kbId: state.currentKbId, name: T('群組'), color: null, members: [...ids], createdAt: Date.now() };
   state.groups.push(g); renderGroups(); refreshOutlineIfOpen(); save();
   toast(`已建立群組（${ids.length} 張卡片）`, { label: '復原', run: () => { state.groups = state.groups.filter(x => x !== g); renderGroups(); refreshOutlineIfOpen(); save(); } });
   return g;
@@ -3499,7 +3756,7 @@ function createDraftChild(parent, side, kind) { checkpoint();
   const spot = adjacentPos(parent, side || 'right', 440, 200);
   const card = { id: uid('card'), kbId: parent.kbId, parentId: parent.id, sourceFollowUp: null, ...(side ? { parentSide: side } : {}),
     x: spot.x, y: spot.y,
-    collapsed: false, createdAt: Date.now(), ...newCardFields(kind, '新分支') };
+    collapsed: false, createdAt: Date.now(), ...newCardFields(kind, T('新分支')) };
   state.cards[card.id] = card; renderCard(card); renderCard(parent); renderKbList();
   placeAdjacent(card, parent, side || 'right'); save(); selectCard(card.id); panToCard(card);
   if (kind === 'note') { setTimeout(() => editNote(card), 200); return card; }
@@ -3645,8 +3902,12 @@ function expandAll() { checkpoint(); kbCards().forEach(c => c.collapsed = false)
     setTimeout(() => fitView(), 220); }, 60))); }
 
 /* ============================== Right sidebar: outline article ============================== */
-const DEFAULT_OUTLINE_PROMPT = "你是一位擅長把零散學習筆記整合成教材的技術寫作者兼學習教練。今天是 {{今天}}。\n\n## 任務\n使用者在「心智圖知識庫」中用問答卡片學習。知識庫：「{{知識庫}}」；本次範圍：「{{範圍}}」（共 {{卡片數}} 張卡片）。\n請把使用者訊息 <notes> 中的卡片**整合**成一篇繁體中文學習文章——不是逐張摘要，也不是照卡片順序串接。\n\n## 輸入格式\n- 每張 <card> 帶有 id、title、depth（0 為根卡片）、parent（父卡片標題），內含：\n  - <tldr>：該卡片的重點摘要\n  - <turn>：一輪或多輪問答，<q> 為問題、<a> 為回答\n  - <explored>：已展開成子卡片的後續問題\n  - <unexplored>：使用者還沒展開的後續問題\n  - <links>：使用者手動建立的關聯（→ 這張卡片指向的卡片、← 指向這張卡片的卡片），常跨越不同族群；請據此串連相關概念\n- 卡片的樹狀結構只代表「當初的提問順序」，僅作為主題關聯的提示；請依**概念**重新組織內容。\n\n## 寫作原則\n1. **整合**：合併重複內容，把散落在不同卡片的同一概念放在一起，並補上概念之間的因果與關聯。\n2. **忠於筆記**：只使用筆記中的資訊。若為了銜接必須補充一般常識，在該句後標註「（補充）」；不確定的內容寧可不寫，不要編造數字、出處或結論。\n3. **處理矛盾**：不同卡片的說法或數字互相衝突時，不要默默抹平——用「⚠️ 筆記說法不一致：……」標出差異，說明較合理的版本與理由。\n4. **保留細節**：關鍵數字、公式、表格、程式碼與權衡取捨都要保留，可重新整理成更清楚的表格或清單。\n5. **解釋術語**：專有名詞第一次出現時，用一句話簡短解釋（括號或破折號即可）。\n6. **可追溯**：每個 ## 或 ### 小節結尾，另起一行列出來源卡片，格式為 `[卡片：卡片標題]`，多張以空格分隔。\n7. 忽略「示範模式」等與學習內容無關的系統提示文字。\n8. **視覺輔助**：筆記中的 ```mermaid 圖解要保留在對應小節（重複的圖可以合併，或簡化成更清楚的版本）；若整個主題有清楚的流程或架構，可以在「概覽」加一張總覽圖。新畫的圖同樣使用 ```mermaid 區塊、用 frontmatter（---／title: 標題／---）寫標題，flowchart 形狀約定為：開始／結束 `([…])`、處理步驟 `(…)`、判斷 `{…}`，連線加簡短標籤 `-->|標籤|`，最多約 12 個節點，不要加 style、classDef 或顏色設定。筆記中的 ```image／```video 區塊照原樣保留在相關段落。比較型內容用表格呈現。\n\n## 文章結構（依素材調整；沒有素材的段落可以省略，不要硬湊）\n# {{範圍}}：學習整理\n> **TL;DR**：3–5 句話說明這個主題的全貌與最重要的結論。\n\n## 概覽\n一段話說明主題要解決什麼問題、有哪些主要面向，以及本文的閱讀路線。\n\n## 核心概念\n依概念分成數個 ### 小節，每節說明「是什麼、為什麼、怎麼做」，並串起概念之間的關係。\n\n## 權衡比較\n筆記中有多個方案或取捨時，用 Markdown 表格比較（方案｜優點｜缺點｜適用情境）。\n\n## 常見誤解與陷阱\n條列容易誤會或實務上容易踩雷的地方，並說明正確的理解。\n\n## 重點回顧\n5–10 條適合快速複習的重點，每條一句話。\n\n## 尚未釐清／建議下一步探索\n從 <unexplored> 的後續問題與本文的知識缺口中，挑出最值得探索的 3–6 個問題，每題附一句「為什麼值得問」。\n\n## 寫作偏好\n{{寫作偏好}}\n\n## 輸出\n只輸出 Markdown 文章本身：不要前言、不要說明你做了什麼，也不要用 ``` 包住整篇文章。";
-const DEFAULT_STYLE_TEXT = '（無特別偏好：讀者是正在自學的工程師；篇幅適中；語氣清楚、精簡，多用條列與表格。）';
+const DEFAULT_OUTLINE_PROMPT_ZH = "你是一位擅長把零散學習筆記整合成教材的技術寫作者兼學習教練。今天是 {{今天}}。\n\n## 任務\n使用者在「心智圖知識庫」中用問答卡片學習。知識庫：「{{知識庫}}」；本次範圍：「{{範圍}}」（共 {{卡片數}} 張卡片）。\n請把使用者訊息 <notes> 中的卡片**整合**成一篇繁體中文學習文章——不是逐張摘要，也不是照卡片順序串接。\n\n## 輸入格式\n- 每張 <card> 帶有 id、title、depth（0 為根卡片）、parent（父卡片標題），內含：\n  - <tldr>：該卡片的重點摘要\n  - <turn>：一輪或多輪問答，<q> 為問題、<a> 為回答\n  - <explored>：已展開成子卡片的後續問題\n  - <unexplored>：使用者還沒展開的後續問題\n  - <links>：使用者手動建立的關聯（→ 這張卡片指向的卡片、← 指向這張卡片的卡片），常跨越不同族群；請據此串連相關概念\n- 卡片的樹狀結構只代表「當初的提問順序」，僅作為主題關聯的提示；請依**概念**重新組織內容。\n\n## 寫作原則\n1. **整合**：合併重複內容，把散落在不同卡片的同一概念放在一起，並補上概念之間的因果與關聯。\n2. **忠於筆記**：只使用筆記中的資訊。若為了銜接必須補充一般常識，在該句後標註「（補充）」；不確定的內容寧可不寫，不要編造數字、出處或結論。\n3. **處理矛盾**：不同卡片的說法或數字互相衝突時，不要默默抹平——用「⚠️ 筆記說法不一致：……」標出差異，說明較合理的版本與理由。\n4. **保留細節**：關鍵數字、公式、表格、程式碼與權衡取捨都要保留，可重新整理成更清楚的表格或清單。\n5. **解釋術語**：專有名詞第一次出現時，用一句話簡短解釋（括號或破折號即可）。\n6. **可追溯**：每個 ## 或 ### 小節結尾，另起一行列出來源卡片，格式為 `[卡片：卡片標題]`，多張以空格分隔。\n7. 忽略「示範模式」等與學習內容無關的系統提示文字。\n8. **視覺輔助**：筆記中的 ```mermaid 圖解要保留在對應小節（重複的圖可以合併，或簡化成更清楚的版本）；若整個主題有清楚的流程或架構，可以在「概覽」加一張總覽圖。新畫的圖同樣使用 ```mermaid 區塊、用 frontmatter（---／title: 標題／---）寫標題，flowchart 形狀約定為：開始／結束 `([…])`、處理步驟 `(…)`、判斷 `{…}`，連線加簡短標籤 `-->|標籤|`，最多約 12 個節點，不要加 style、classDef 或顏色設定。筆記中的 ```image／```video 區塊照原樣保留在相關段落。比較型內容用表格呈現。\n\n## 文章結構（依素材調整；沒有素材的段落可以省略，不要硬湊）\n# {{範圍}}：學習整理\n> **TL;DR**：3–5 句話說明這個主題的全貌與最重要的結論。\n\n## 概覽\n一段話說明主題要解決什麼問題、有哪些主要面向，以及本文的閱讀路線。\n\n## 核心概念\n依概念分成數個 ### 小節，每節說明「是什麼、為什麼、怎麼做」，並串起概念之間的關係。\n\n## 權衡比較\n筆記中有多個方案或取捨時，用 Markdown 表格比較（方案｜優點｜缺點｜適用情境）。\n\n## 常見誤解與陷阱\n條列容易誤會或實務上容易踩雷的地方，並說明正確的理解。\n\n## 重點回顧\n5–10 條適合快速複習的重點，每條一句話。\n\n## 尚未釐清／建議下一步探索\n從 <unexplored> 的後續問題與本文的知識缺口中，挑出最值得探索的 3–6 個問題，每題附一句「為什麼值得問」。\n\n## 寫作偏好\n{{寫作偏好}}\n\n## 輸出\n只輸出 Markdown 文章本身：不要前言、不要說明你做了什麼，也不要用 ``` 包住整篇文章。";
+const DEFAULT_OUTLINE_PROMPT_EN = "You are a technical writer and learning coach who is good at turning scattered study notes into teaching material. Today is {{today}}.\n\n## Task\nThe user learns with Q&A cards in \"Mindmap Knowledge Base\". Knowledge base: \"{{kb}}\"; scope: \"{{scope}}\" ({{count}} cards).\n**Integrate** the cards in the user message's <notes> into one study article written in English \u2014 not a card-by-card summary, and not the cards strung together in order.\n\n## Input format\n- Each <card> has an id, title, depth (0 = root card) and parent (the parent card's title), and contains:\n  - <tldr>: the card's key-point summary\n  - <turn>: one or more Q&A turns, <q> is the question, <a> the answer\n  - <note>: content the user typed or pasted themselves (sticky notes)\n  - <explored>: follow-up questions already expanded into child cards\n  - <unexplored>: follow-up questions the user has not expanded yet\n  - <links>: connections the user created by hand (\u2192 cards this card points to, \u2190 cards pointing to this card), often across clusters; use them to connect related concepts\n- The card tree only reflects \"the order in which questions were asked\" and is just a hint about how topics relate; reorganise the content by **concept**.\n\n## Writing principles\n1. **Integrate**: merge duplicate content, bring together the same concept scattered across cards, and add the causes and relationships between concepts.\n2. **Stay faithful to the notes**: only use information from the notes. If you must add general knowledge to connect ideas, mark that sentence with \"(added)\"; rather leave uncertain content out than invent numbers, sources or conclusions.\n3. **Handle contradictions**: when cards disagree on claims or numbers, don't silently smooth it over \u2014 flag it with \"\u26a0\ufe0f The notes disagree: \u2026\", and explain which version is more reasonable and why.\n4. **Keep the details**: keep key numbers, formulas, tables, code and trade-offs; you may reorganise them into clearer tables or lists.\n5. **Explain terms**: when a technical term first appears, explain it briefly in one sentence (brackets or a dash are fine).\n6. **Traceability**: at the end of every ## or ### section, on its own line, list the source cards as `[Card: card title]`, separated by spaces.\n7. Ignore system text unrelated to the learning content, such as \"demo mode\" notices.\n8. **Visual aids**: keep the notes' ```mermaid diagrams in the matching sections (duplicates may be merged or simplified into a clearer version); if the whole topic has a clear process or architecture, you may add an overview diagram under \"Overview\". New diagrams also use ```mermaid blocks with a frontmatter title (---/title: Title/---); flowchart shapes: start / end `([\u2026])`, steps `(\u2026)`, decisions `{\u2026}`, short edge labels `-->|label|`, at most about 12 nodes, no style, classDef or colour settings. Keep the notes' ```image / ```video blocks as-is in the relevant paragraphs. Present comparisons as tables.\n\n## Article structure (adapt to the material; omit sections without material rather than padding)\n# {{scope}}: study notes\n> **TL;DR**: 3\u20135 sentences on the big picture of the topic and the most important conclusions.\n\n## Overview\nOne paragraph on what problem the topic solves, its main aspects, and how this article is organised.\n\n## Core concepts\nSeveral ### sections by concept, each explaining \"what, why, how\", connecting the concepts to each other.\n\n## Trade-offs\nWhen the notes contain several options or trade-offs, compare them in a Markdown table (Option | Pros | Cons | When to use).\n\n## Common misconceptions and pitfalls\nList what is easy to misunderstand or get wrong in practice, and the correct understanding.\n\n## Key takeaways\n5\u201310 points for quick review, one sentence each.\n\n## Open questions / what to explore next\nFrom the <unexplored> follow-ups and gaps in this article, pick the 3\u20136 questions most worth exploring, each with one sentence on \"why it is worth asking\".\n\n## Writing preferences\n{{style}}\n\n## Output\nOutput only the Markdown article itself: no preamble, no description of what you did, and do not wrap the whole article in ```.";
+const DEFAULT_STYLE_TEXT_EN = '(No particular preference: the reader is a self-taught engineer; medium length; clear, concise tone with plenty of lists and tables.)';
+let DEFAULT_OUTLINE_PROMPT, DEFAULT_STYLE_TEXT;
+function applyLangPrompts() { DEFAULT_ANSWER_PROMPT = isEn() ? DEFAULT_ANSWER_PROMPT_EN : DEFAULT_ANSWER_PROMPT_ZH; ANSWER_JSON_CONTRACT = isEn() ? ANSWER_JSON_CONTRACT_EN : ANSWER_JSON_CONTRACT_ZH; DEFAULT_OUTLINE_PROMPT = isEn() ? DEFAULT_OUTLINE_PROMPT_EN : DEFAULT_OUTLINE_PROMPT_ZH; DEFAULT_STYLE_TEXT = isEn() ? DEFAULT_STYLE_TEXT_EN : DEFAULT_STYLE_TEXT_ZH; }
+const DEFAULT_STYLE_TEXT_ZH = '（無特別偏好：讀者是正在自學的工程師；篇幅適中；語氣清楚、精簡，多用條列與表格。）';
 let showRaw = false; // view toggle: show auto compilation even when a Grok article exists
 const aiStore = () => (kb().aiOutlines = kb().aiOutlines || {}); // clusterKey -> { markdown, updatedAt, model, promptSource }
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
@@ -3655,14 +3916,16 @@ function effectivePrompt(k = kb()) {
   return { template: custom ? k.outlinePrompt : (settings.outlinePrompt || DEFAULT_OUTLINE_PROMPT), source: custom ? 'kb' : (settings.outlinePrompt ? 'global' : 'default'),
            style: (k.outlineStyle || '').trim() || (settings.outlineStyle || '').trim() };
 }
-const scopeLabel = (key) => key === '__all__' ? `整個知識庫（${kb().name}）` : (state.cards[key]?.title || '');
+const scopeLabel = (key) => key === '__all__' ? T(`整個知識庫（${kb().name}）`) : (state.cards[key]?.title || '');
 function resolvePrompt(rootIds, key) {
   const { template, style, source } = effectivePrompt();
   const scope = scopeLabel(key);
   let count = 0; const cnt = (c) => { count++; childrenOf(c.id).forEach(cnt); }; rootIds.forEach(id => cnt(state.cards[id]));
   const vars = { '知識庫': kb().name, '範圍': scope, '今天': today(), '卡片數': String(count), '寫作偏好': style || DEFAULT_STYLE_TEXT };
-  let out = template.replace(/\{\{\s*(知識庫|範圍|今天|卡片數|寫作偏好)\s*\}\}/g, (_, k) => vars[k]);
-  if (style && !/\{\{\s*寫作偏好\s*\}\}/.test(template)) out += `\n\n## 寫作偏好\n${style}`;
+  Object.assign(vars, { kb: vars['知識庫'], scope: vars['範圍'], today: vars['今天'], count: vars['卡片數'], style: vars['寫作偏好'] }); // English aliases
+  let out = template.replace(/\{\{\s*(知識庫|範圍|今天|卡片數|寫作偏好|kb|scope|today|count|style)\s*\}\}/g, (_, k) => vars[k]);
+  if (style && !/\{\{\s*(寫作偏好|style)\s*\}\}/.test(template)) out += isEn() ? `\n\n## Writing preferences\n${style}` : `\n\n## 寫作偏好\n${style}`;
+  if (isEn() && source !== 'default') out += '\n\nWrite the article in English.';
   return { system: out, source };
 }
 // Structured user payload: tree order, one <card> per node
@@ -3670,15 +3933,15 @@ function buildNotesPayload(rootIds, key) {
   const scope = scopeLabel(key);
   const x = (t) => String(t ?? '').replace(/</g, '＜').replace(/>/g, '＞');
   const attr = (t) => x(t).replace(/"/g, '”');
-  let out = `以下是要整合的筆記（依卡片樹狀順序排列）：\n\n<notes kb="${attr(kb().name)}" scope="${attr(scope)}">\n`;
+  let out = `${T('以下是要整合的筆記（依卡片樹狀順序排列）：')}\n\n<notes kb="${attr(kb().name)}" scope="${attr(scope)}">\n`;
   const walk = (c, depth) => {
     const p = c.parentId && state.cards[c.parentId];
     const kids = childrenOf(c.id);
     const explored = (c.followUps || []).filter(f => kids.some(k => k.sourceFollowUp === f));
     const unexplored = (c.followUps || []).filter(f => !explored.includes(f));
-    out += `<card id="${c.id}" title="${attr(c.title || firstQ(c))}" depth="${depth}" parent="${p ? attr(p.title) : '（根卡片）'}"${groupOf(c.id) ? ` group="${attr(groupOf(c.id).name)}"` : ''}>\n`;
+    out += `<card id="${c.id}" title="${attr(c.title || firstQ(c))}" depth="${depth}" parent="${p ? attr(p.title) : T('（根卡片）')}"${groupOf(c.id) ? ` group="${attr(groupOf(c.id).name)}"` : ''}>\n`;
     if (c.tldr) out += `<tldr>${x(c.tldr)}</tldr>\n`;
-    if (isNote(c)) { if (c.noteTldr) out += `<tldr>${x(c.noteTldr)}</tldr>\n`; out += `<note kind="使用者自己貼上的筆記">\n${x(noteToMd(c))}\n</note>\n`; }
+    if (isNote(c)) { if (c.noteTldr) out += `<tldr>${x(c.noteTldr)}</tldr>\n`; out += `<note kind="${T('使用者自己貼上的筆記')}">\n${x(noteToMd(c))}\n</note>\n`; }
     c.turns.filter(t => t.status === 'done').forEach((t, i) => { out += `<turn n="${i + 1}">\n<q>${x(t.q)}</q>\n<a>\n${x(stripDemo(t.a))}\n</a>\n</turn>\n`; });
     if (explored.length) out += `<explored>${explored.map(f => `\n- ${x(f)}`).join('')}\n</explored>\n`;
     if (unexplored.length) out += `<unexplored>${unexplored.map(f => `\n- ${x(f)}`).join('')}\n</unexplored>\n`;
@@ -3694,21 +3957,21 @@ function clusters() { return kbCards().filter(c => !c.parentId || !state.cards[c
 function currentClusterKey() { return $('#clusterSel').value || '__all__'; }
 function buildOutlineMarkdown(rootIds) {
   let out = '';
-  const titleText = rootIds.length === 1 ? state.cards[rootIds[0]].title : `${kb().name}：學習總整理`;
+  const titleText = rootIds.length === 1 ? state.cards[rootIds[0]].title : (isEn() ? `${kb().name}: ${T('學習總整理')}` : `${kb().name}：學習總整理`);
   out += `# ${titleText}\n\n`;
   { // groups: cards in a group listed under the group name
     const inScope = new Set(); const coll = (c) => { inScope.add(c.id); childrenOf(c.id).forEach(coll); }; rootIds.forEach(id => coll(state.cards[id]));
     const gs = kbGroups().map(g => [g, g.members.filter(id => inScope.has(id)).map(id => state.cards[id])]).filter(([, ms]) => ms.length);
-    if (gs.length) { out += `## 群組\n\n`; gs.forEach(([g, ms]) => { out += `### 📁 ${g.name}\n\n${ms.map(c => { const t = isNote(c) ? noteTldr(c) : c.tldr; return `- **${c.title || firstQ(c)}**${t ? `：${t}` : ''}`; }).join('\n')}\n\n`; }); }
+    if (gs.length) { out += `## ${T('群組')}\n\n`; gs.forEach(([g, ms]) => { out += `### 📁 ${g.name}\n\n${ms.map(c => { const t = isNote(c) ? noteTldr(c) : c.tldr; return `- **${c.title || firstQ(c)}**${t ? `${isEn() ? ': ' : '：'}${t}` : ''}`; }).join('\n')}\n\n`; }); }
   }
   const walk = (c, depth, num) => {
     const h = '#'.repeat(Math.min(depth + 2, 5));
     out += `${h} ${num} ${c.title || firstQ(c)}\n\n`;
-    if (c.tldr) out += `> TL;DR：${c.tldr}\n\n`;
-    if (isNote(c) && c.noteTldr) out += `> TL;DR：${c.noteTldr}\n\n`;
-    { const L = linksOf(c); const parts = [...L.out.map(x => `→ ${x.title}`), ...L.in.map(x => `← ${x.title}`)]; if (parts.length) out += `相關連結：${parts.join('、')}\n\n`; }
+    if (c.tldr) out += `> TL;DR${isEn() ? ': ' : '：'}${c.tldr}\n\n`;
+    if (isNote(c) && c.noteTldr) out += `> TL;DR${isEn() ? ': ' : '：'}${c.noteTldr}\n\n`;
+    { const L = linksOf(c); const parts = [...L.out.map(x => `→ ${x.title}`), ...L.in.map(x => `← ${x.title}`)]; if (parts.length) out += isEn() ? `${T('相關連結')}: ${parts.join(', ')}\n\n` : `相關連結：${parts.join('、')}\n\n`; }
     if (isNote(c)) { const m = noteToMd(c); if (m) out += `${m}\n\n`; }
-    c.turns.filter(t => t.status === 'done').forEach(t => { out += `**Q：${t.q}**\n\n${stripDemo(t.a)}\n\n`; });
+    c.turns.filter(t => t.status === 'done').forEach(t => { out += `**Q${isEn() ? ': ' : '：'}${t.q}**\n\n${stripDemo(t.a)}\n\n`; });
     childrenOf(c.id).forEach((k, i) => walk(k, depth + 1, `${num}${i + 1}.`));
   };
   rootIds.forEach((id, i) => walk(state.cards[id], rootIds.length === 1 ? 0 : 0, `${i + 1}.`));
@@ -3734,7 +3997,7 @@ function renderOutline(resetSel, wantScope) {
   const srcLabel = saved ? ({ kb: '知識庫自訂提示詞', global: '全域提示詞', default: '預設提示詞' }[saved.promptSource] || '') : '';
   $('#outline').innerHTML = (useAi ? `<div class="outline-meta" style="color:var(--accent)">✨ 由 Grok 改寫（${esc(when)}・${esc(saved.model || '')}・${srcLabel}）<a data-raw="1">看自動彙整版</a></div>`
       : `<div class="outline-meta" style="color:var(--muted)">依卡片樹狀順序自動彙整（標題＋TL;DR＋各輪問答）${saved ? '<a data-raw="0">看 Grok 改寫版</a>' : ''}</div>`)
-    + `<div class="toc"><b>目錄</b><ul>${toc.join('')}</ul></div>` + md(mdText);
+    + `<div class="toc"><b>目錄</b><ul>${toc.join('')}</ul></div><div class="outline-article">` + md(mdText) + '</div>';
   hydrateViz($('#outline'));
   $('#outline').dataset.md = mdText;
 }
@@ -3813,15 +4076,24 @@ document.addEventListener('click', (e) => { const v = e.target.closest('[data-va
   const a = ta.selectionStart ?? ta.value.length, b = ta.selectionEnd ?? a; ta.value = ta.value.slice(0, a) + v.dataset.var + ta.value.slice(b); ta.focus(); ta.selectionStart = ta.selectionEnd = a + v.dataset.var.length; });
 
 /* ============================== Boot ============================== */
+function setLang(l) {
+  if (l !== 'en' && l !== 'zh-TW') return; if (l === LANG) { applyLangDom(); return; } LANG = l; try { localStorage.setItem(LANG_KEY, l); } catch {}
+  applyLangPrompts(); closeCtx(); applyLangDom();
+  renderKbList(); renderAllCards(); renderGroups(); refreshOutlineIfOpen(); restoreKbUi?.();
+  if ($('#settingsModal').classList.contains('open')) { if (!settings.answerPrompt) $('#setAnswerPrompt').value = DEFAULT_ANSWER_PROMPT; if (!settings.outlinePrompt) $('#setPrompt').value = DEFAULT_OUTLINE_PROMPT; }
+}
+document.addEventListener('change', (e) => { if (e.target.id === 'setLang') setLang(e.target.value); });
+$('#btnLang').onclick = () => setLang(isEn() ? 'zh-TW' : 'en');
+applyLangPrompts();
 load(); delete state.ui.outlineW; if (state.ui.leftAuto) { state.ui.leftAuto = false; state.ui.leftCollapsed = false; } // the outline always starts closed
-$('#left').classList.toggle('collapsed', !!state.ui.leftCollapsed); pruneDrafts(null, true); renderKbList(); renderAllCards(); restoreKbUi(); save();
+$('#left').classList.toggle('collapsed', !!state.ui.leftCollapsed); pruneDrafts(null, true); applyLangDom(); renderKbList(); renderAllCards(); restoreKbUi(); save();
 // thread scroll positions are part of the per-KB UI state (scroll doesn't bubble → capture phase)
 canvasEl.addEventListener('scroll', (e) => { if (e.target.classList?.contains('thread') && kbUiReady) save(); }, true);
 
 window.addEventListener('resize', drawEdges);
-window.__app = { save: () => save(), toast: (m, a) => toast(m, a), flushSave: () => flushSave(), get savePending() { return savePending; },
+window.__app = { setLang: (l) => setLang(l), get lang() { return LANG; }, T: (s, v) => T(s, v), save: () => save(), toast: (m, a) => toast(m, a), flushSave: () => flushSave(), get savePending() { return savePending; },
   inject(st) { savePending = false; clearTimeout(saveTimer); localStorage.setItem(STORE_KEY, JSON.stringify(st)); }, // supported test path: replace stored state, then reload
-  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem, sanitizeNote: (h) => sanitizeNote(h), noteTldr: (c) => noteTldr(c), outlineMd: () => buildOutlineMarkdown(clusters().map(c => c.id)), notesPayload: () => buildNotesPayload(clusters().map(c => c.id), '__all__'), undo: () => undo(), redo: () => redo(), toNote: (id) => convertToNote(state.cards[id]), toConv: (id) => convertToConversation(state.cards[id]), dupNote: (id) => duplicateNote(state.cards[id]) };
+  epSpot: (...a) => epSpot(...a), handleK: () => handleK(), LAYOUT, setView(x, y, z) { const v = vp(); v.x = x; v.y = y; v.z = z; applyViewport(); }, drawEdges: () => drawEdges(), setLeft: (v) => setLeftCollapsed(v), setOutlineWidth: (w) => setOutlineWidth(w), fitView: () => fitView(), PALETTE, groupRect: (g) => groupRect(g), tidy: () => tidy(), routeCache, get routingPaused() { return routingPaused; }, get state() { return state; }, get settings() { return settings; }, DEFAULT_OUTLINE_PROMPT, DEFAULT_ANSWER_PROMPT, answerSystem: () => answerSystem(), mmdCache, mediaMem, sanitizeNote: (h) => sanitizeNote(h), noteTldr: (c) => noteTldr(c), outlineMd: () => buildOutlineMarkdown(clusters().map(c => c.id)), notesPayload: () => buildNotesPayload(clusters().map(c => c.id), '__all__'), undo: () => undo(), redo: () => redo(), toNote: (id) => convertToNote(state.cards[id]), toConv: (id) => convertToConversation(state.cards[id]), dupNote: (id) => duplicateNote(state.cards[id]), group: (ids) => createGroup(ids) };
 </script>
 </body>
 </html>
