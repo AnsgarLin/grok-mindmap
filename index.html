@@ -817,7 +817,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<'
      knowledge-base and group names, the outline article). Original text is remembered so switching back restores it.
    - native confirm / prompt / alert messages go through T(). In zh-TW mode nothing runs (zero overhead). */
 const LANG_KEY = 'grok-mindmap-lang';
-let LANG = (() => { try { const v = localStorage.getItem(LANG_KEY); if (v === 'en' || v === 'zh-TW') return v; } catch {} return /^zh/i.test(navigator.language || '') ? 'zh-TW' : 'en'; })();
+let LANG = (() => { try { const v = localStorage.getItem(LANG_KEY); if (v === 'en' || v === 'zh-TW') return v; } catch {} return 'en'; })(); // default English; a saved choice wins
 const isEn = () => LANG === 'en';
 const CJK_RE = /[\u3000-\u303f\u3400-\u9fff\uff01-\uff60]/;
 const pl = (n, w, p) => `${n} ${+n === 1 ? w : (p || w + 's')}`;
@@ -1227,6 +1227,173 @@ const DEMO_DIAGRAM_EN = ['```mermaid', '---', 'title: TinyURL core flow', '---',
   '  A([User request]) --> B(API server)',
   '  B -->|Shorten POST| C(Generate unique ID)', '  C --> D(Base62 encode)', '  D --> E[(Write to DB)]', '  E --> F([Return short URL])',
   '  B -->|Redirect GET| G{Short code exists?}', '  G -->|Yes| H(Check cache / DB)', '  H --> I([302 to original URL])', '  G -->|No| J([Return 404])', '```'].join('\n');
+// ---- first-run tutorial KB (v1.0.1): one "Getting Started" / 「使用教學」 canvas that teaches by example ----
+function seedTutorial() {
+  const en = isEn(), L = (e, z) => en ? e : z, now = Date.now(), kb = uid('kb');
+  const id = {}; for (const k of ['root', 'ask', 'tldr', 'diag', 'link', 'api', 'grok', 'outline', 'lang', 'nav', 'sel', 'menu', 'note']) id[k] = uid('card');
+  let n = 0;
+  const conv = (k, title, q, a, extra = {}) => ({ id: id[k], kbId: kb, parentId: null, x: 0, y: 0, collapsed: false, status: 'active', createdAt: now + n++,
+    title, turns: [turn(q, a, 'done', now + n)], tldrTurns: 1, tldr: '', followUps: [], grokUrl: '', ...extra });
+  const chips = {
+    ask: L('How do I ask, continue and branch?', '怎麼提問、追問、開分支？'),
+    diag: L('Can answers include diagrams?', '回答可以有圖解嗎？'),
+    api: L('How do I connect real Grok answers?', '怎麼接上真正的 Grok 回答？'),
+    outline: L('How do I turn the canvas into notes?', '怎麼把畫布整理成筆記？'),
+  };
+  const mermaid = ['```mermaid', 'flowchart LR',
+    `  Q["${L('Ask', '提問')}"] --> A["${L('Answer + TL;DR', '回答＋TL;DR')}"]`,
+    `  A --> C["${L('Follow-up chips', '追問 chip')}"]`,
+    `  C -->|${L('here', '在這裡')}| A`,
+    `  C -->|${L('new branch', '新分支')}| B["${L('Branch card', '分支卡片')}"]`,
+    `  A --> O["${L('Outline article', '大綱文章')}"]`, '```'].join('\n');
+  const cards = [
+    conv('root', L('Welcome to Mindmap KB', '歡迎使用心智圖知識庫'), L('What is this app?', '這是什麼？'),
+      L(`A canvas where every **card is a conversation** with Grok. Ask a question, keep asking in the same card, and branch off side questions into new cards; the arrows keep the trail of how you learned.
+
+This knowledge base is a tour: each card explains one feature. Try things here freely — **Ctrl/⌘ + Z** undoes almost anything.
+
+The chips below are suggested follow-ups; the ones marked “→ Expanded” already have their branch card.`,
+      `一張畫布，每張**卡片都是一段和 Grok 的對話**。在同一張卡片裡繼續追問，岔出去的問題就開成新的分支卡片；箭頭記下你一路學習的脈絡。
+
+這個知識庫是導覽：每張卡片說明一項功能，可以放心在這裡試，幾乎所有操作都能用 **Ctrl/⌘＋Z** 復原。
+
+下面的 chip 是建議追問，標著「→ 已展開」的已經有分支卡片。`),
+      { followUps: [chips.ask, chips.diag, chips.api, chips.outline], color: 'blue',
+        tldr: L('Every card is a Grok conversation; branch, link, group and turn it into notes.', '每張卡片是一段 Grok 對話；可分支、連結、分組，再整理成筆記。') }),
+    conv('ask', L('Asking, continuing, branching', '提問、追問、開分支'), chips.ask,
+      L(`- **Continue** — type in the box at the bottom of a card, or just hover the card and start typing.
+- **Chips** — click a suggested follow-up, then choose **Ask here** (same card) or **Ask in a new branch**.
+- **Side ＋** — the ＋ at the middle of each card edge opens a new branch on that side.
+- **New chat** — top bar, or right-click empty canvas.
+- **Rename** — double-click a title.`,
+      `- **追問**：在卡片底部的輸入框打字，或把滑鼠停在卡片上直接打字。
+- **chip**：點建議追問，再選「在這裡提問」（同一張卡片）或「在新分支中提問」。
+- **四邊 ＋**：卡片每一邊中點的 ＋ 會在那一側開新分支。
+- **新對話**：上方工具列，或在空白畫布按右鍵。
+- **改名**：雙擊標題。`),
+      { sourceFollowUp: chips.ask, parentId: id.root, followUps: [L('What does collapsing a card do?', '收合卡片會怎樣？')],
+        tldr: L('Ask in the bottom box or by typing on a hovered card; chips ask here or branch; edge ＋ opens a branch.', '底部輸入或停在卡片上打字；chip 可在原卡或新分支提問；四邊 ＋ 開分支。') }),
+    conv('tldr', L('Collapsed: TL;DR', '收合：TL;DR'), L('What does collapsing a card do?', '收合卡片會怎樣？'),
+      L(`Collapsing shrinks a card to a one-line **TL;DR** so the canvas stays readable. The first collapse asks Grok for the summary; after more turns it is marked stale and can be regenerated. Use **Collapse all / Expand all** in the top bar, or the card's right-click menu.`,
+      `收合會把卡片縮成一句 **TL;DR**，讓畫布保持清爽。第一次收合時請 Grok 產生摘要；之後若有新的對話會標示「已過期」，可以重新產生。上方工具列有「全部收合／全部展開」，卡片右鍵選單也可以收合。`),
+      { sourceFollowUp: L('What does collapsing a card do?', '收合卡片會怎樣？'), parentId: id.ask, collapsed: true,
+        tldr: L('This card is collapsed — click it (or Expand) to read the full answer.', '這張卡片已收合，點它（或「展開」）看完整回答。') }),
+    conv('diag', L('Diagrams and visuals', '圖解與視覺輔助'), chips.diag,
+      L(`Yes. Answers can contain **Mermaid** diagrams and tables, rendered right in the card (click a diagram to enlarge it):
+
+${mermaid}
+
+When a picture or video would help, Grok can suggest one; it is generated only when you click it (needs an API key).`,
+      `可以。回答裡的 **Mermaid** 圖解與表格會直接畫在卡片裡（點圖可放大）：
+
+${mermaid}
+
+需要插圖或影片時 Grok 會先提出建議，你點了才會生成（需要 API Key）。`),
+      { sourceFollowUp: chips.diag, parentId: id.root, tldr: L('Mermaid diagrams and tables render in cards; images/videos are generated on click.', 'Mermaid 圖解與表格直接顯示；插圖／影片點了才生成。') }),
+    conv('link', L('Links and arrow colors', '連結與箭頭顏色'), L('How do I connect two cards?', '怎麼把兩張卡片連起來？'),
+      L(`The arrow pointing here is a **manual link**, not a branch:
+
+- Drag a card's edge **＋** onto another card, or right-click → **Link to…**
+- Click an arrow to select it, then **Delete** removes the link (undoable).
+- Right-click an arrow (or select it) to **recolor** it; drag an arrow's end to reattach it.
+- Card colors: the 🎨 at a card's top right.`,
+      `指向這裡的箭頭是**手動連結**，不是分支：
+
+- 把卡片邊上的 **＋** 拖到另一張卡片上，或右鍵「連結到…」。
+- 點選箭頭後按 **Delete** 取消連結（可復原）。
+- 在箭頭上按右鍵（或選取時）可以**改顏色**；拖曳箭頭端點可以重新接上。
+- 卡片顏色：卡片右上角的 🎨。`),
+      { color: 'orange', tldr: L('Drag ＋ onto a card or right-click “Link to…”; select an arrow to delete or recolor it.', '把 ＋ 拖到卡片或右鍵「連結到…」；選取箭頭可刪除或改色。') }),
+    conv('api', L('Connect Grok (xAI API key)', '接上 Grok（xAI API Key）'), chips.api,
+      L(`Open **Settings (xAI API key)** at the bottom left and paste a key from console.x.ai. Without a key the app runs in **demo mode** with sample answers, so you can try everything first.
+
+The key is stored only in this browser's localStorage and sent only to the API base URL in Settings. You can also change the model and the answer prompt there.`,
+      `按左下角「設定（xAI API Key）」，貼上 console.x.ai 的 API Key。沒有填 Key 時是**示範模式**，回答用範例內容，可以先試用所有功能。
+
+Key 只存在這個瀏覽器的 localStorage，只會送到設定裡的 API 網址。模型與回答提示詞也在設定裡調整。`),
+      { sourceFollowUp: chips.api, parentId: id.root, tldr: L('Settings → paste an xAI API key; without one, demo mode.', '設定 → 貼上 xAI API Key；沒有 Key 就是示範模式。') }),
+    conv('grok', L('Link a grok.com chat', '連結 grok.com 對話'), L('Can a card point to a chat on grok.com?', '卡片可以連到 grok.com 的對話嗎？'),
+      L(`Yes. Paste a grok.com conversation URL into the **Grok chat** field at the bottom of a card and press **Open** to jump back to it. **Ask on Grok** opens a new grok.com chat with the card's current question.
+
+grok.com has no public history API, so the content is linked, not imported.`,
+      `可以。把 grok.com 的對話網址貼到卡片底部的「Grok 對話」欄位，按「開啟」就能回到那段對話；「在 Grok 問」會用卡片目前的問題在 grok.com 開新對話。
+
+grok.com 沒有公開的對話紀錄 API，所以只能連結，無法匯入內容。`),
+      { sourceFollowUp: L('Can a card point to a chat on grok.com?', '卡片可以連到 grok.com 的對話嗎？'), parentId: id.api, grokUrl: '',
+        tldr: L('Paste a grok.com URL into the card’s Grok chat field; “Ask on Grok” opens a new chat.', '把 grok.com 網址貼到卡片的 Grok 對話欄位；「在 Grok 提問」開新對話。') }),
+    conv('outline', L('Outline sidebar', '大綱側欄'), chips.outline,
+      L(`Press **Outline** (top right). It compiles the whole knowledge base — or one cluster, picked from the menu — into an article: contents, titles, TL;DRs and every Q&A turn, in card-tree order.
+
+- **Rewrite with Grok** turns it into study notes.
+- **Prompt** edits the rewrite prompt for this knowledge base.
+- **Copy Markdown** copies the article.`,
+      `按右上角「大綱」。它會把整個知識庫（或從選單挑一個族群）依卡片樹的順序整理成一篇文章：目錄、標題、TL;DR 和每一輪問答。
+
+- 「用 Grok 改寫」：改寫成學習筆記。
+- 「提示詞」：調整這個知識庫的改寫提示詞。
+- 「複製 Markdown」：複製整篇文章。`),
+      { sourceFollowUp: chips.outline, parentId: id.root, followUps: [L('Where is my data stored?', '我的資料存在哪裡？')],
+        tldr: L('Outline compiles cards into an article; rewrite it with Grok or copy it as Markdown.', '大綱把卡片整理成文章，可用 Grok 改寫或複製成 Markdown。') }),
+    conv('lang', L('Language and privacy', '語言與隱私'), L('Where is my data stored?', '我的資料存在哪裡？'),
+      L(`Everything — knowledge bases, cards, settings — stays **in this browser** (localStorage; generated images in IndexedDB). There is no server: questions go straight from your browser to the xAI API, and nothing is sent without a key. Clearing site data erases it.
+
+**Language**: the small button at the bottom of the sidebar (or Settings → Language) switches between English and Traditional Chinese instantly; existing cards are not translated.`,
+      `所有知識庫、卡片和設定都只存在**這個瀏覽器**（localStorage；生成的圖片在 IndexedDB）。沒有後端伺服器：提問直接從瀏覽器送到 xAI API，沒有 Key 就不會送出任何東西。清除網站資料會一併刪除。
+
+**語言**：側欄底部的小按鈕（或設定 → 介面語言）可以即時切換 English／繁體中文；既有卡片不會被翻譯。`),
+      { sourceFollowUp: L('Where is my data stored?', '我的資料存在哪裡？'), parentId: id.outline,
+        tldr: L('All data stays in this browser; requests go straight to xAI. Switch language in the sidebar.', '資料只在這個瀏覽器，請求直接送 xAI；側欄可切換語言。') }),
+    conv('nav', L('Moving around', '在畫布上移動'), L('How do I pan and zoom?', '怎麼平移和縮放？'),
+      L(`- **Pan**: drag empty space, two-finger scroll, Space + drag, or middle-mouse drag.
+- **Zoom**: wheel / pinch, Ctrl + / Ctrl −, or the buttons at the bottom right.
+- **Double-click** empty space: zoom in. **Double right-click** (or Alt/Option + double-click): zoom out.
+- **Center** fits everything; **Tidy** re-lays out the cards.`,
+      `- **平移**：拖曳空白處、雙指滑動、空白鍵＋拖曳，或滑鼠中鍵拖曳。
+- **縮放**：滾輪／捏合、Ctrl＋／Ctrl－，或右下角按鈕。
+- 在空白處**雙擊**放大；**右鍵雙擊**（或 Alt/Option＋雙擊）縮小。
+- 「置中」顯示全部卡片；「整理」重新排版。`),
+      { tldr: L('Drag or two-finger scroll to pan; wheel/pinch to zoom; double-click in, double right-click out.', '拖曳或雙指平移；滾輪／捏合縮放；雙擊放大、右鍵雙擊縮小。') }),
+    conv('sel', L('Selecting and grouping', '多選與群組'), L('How do I work with several cards?', '怎麼一次處理多張卡片？'),
+      L(`- **Shift + drag** empty space to marquee-select; **Shift + click** a card to add or remove it; Esc clears.
+- Drag any selected card's title bar to move them together.
+- Right-click the selection → **Create group**. These three cards are a group: drag its tab to move it, right-click the tab to recolor, rename or ungroup.`,
+      `- **Shift＋拖曳**空白處框選；**Shift＋點卡片**加入或移出選取；Esc 取消。
+- 拖曳任一張已選卡片的標題列，會一起移動。
+- 在選取的卡片上按右鍵 →「建立群組」。這三張卡片就是一個群組：拖曳書籤標籤可移動整組，在標籤上按右鍵可改色、改名或解散。`),
+      { parentId: id.nav, sourceFollowUp: L('How do I work with several cards?', '怎麼一次處理多張卡片？'),
+        tldr: L('Shift-drag or Shift-click to select; right-click → Create group; drag the group tab.', 'Shift 拖曳／點選多選；右鍵建立群組；拖曳群組標籤。') }),
+    conv('menu', L('Right-click menus and undo', '右鍵選單與復原'), L('Where are all the commands?', '所有指令在哪裡？'),
+      L(`Right-click is the main menu: on **empty canvas** (new chat or sticky here, tidy, select), on a **card** (branch, link, collapse, color, convert to sticky, copy Markdown, delete), on an **arrow** or a **group tab**.
+
+**Ctrl/⌘ + Z** undoes and **Ctrl/⌘ + Y** (or Shift + Z) redoes moves, resizes, links, groups, colors and deletions. Drag a card's edges or corner to resize it.`,
+      `右鍵是主要選單：在**空白畫布**（在此建立新對話／貼紙、整理、框選）、**卡片**（分支、連結、收合、顏色、轉成貼紙、複製 Markdown、刪除）、**箭頭**或**群組標籤**上各有不同選項。
+
+**Ctrl/⌘＋Z** 復原、**Ctrl/⌘＋Y**（或 Shift＋Z）重做：移動、調整大小、連結、群組、顏色、刪除都可以。拖曳卡片邊緣或角落可調整大小。`),
+      { parentId: id.nav, sourceFollowUp: L('Where are all the commands?', '所有指令在哪裡？'),
+        tldr: L('Right-click canvas, cards, arrows and group tabs; Ctrl/⌘+Z undo, Ctrl/⌘+Y redo.', '在畫布、卡片、箭頭、群組標籤按右鍵；Ctrl/⌘＋Z 復原、Ctrl/⌘＋Y 重做。') }),
+    { id: id.note, kbId: kb, parentId: null, x: 0, y: 0, collapsed: false, status: 'active', createdAt: now + n++, kind: 'note', color: 'yellow',
+      title: L('Sticky notes', '貼紙'), turns: [], tldr: '', followUps: [], grokUrl: '',
+      noteMd: L(`**This is a sticky** — a card that never calls Grok. Click its text to edit.
+
+- Paste text, links or **images**; formatting such as bold, lists and tables is kept.
+- Plain text supports **Markdown**: \`**bold**\`, \`- list\`, \`# heading\`.
+- Create one with **New sticky** in the top bar or by right-clicking the canvas.
+- A conversation card can be **converted to a sticky** and back (right-click).`,
+      `**這是一張貼紙**：不會呼叫 Grok 的卡片，點文字就能編輯。
+
+- 可以貼上文字、連結或**圖片**，粗體、清單、表格等格式會保留。
+- 純文字支援 **Markdown**：\`**粗體**\`、\`- 清單\`、\`# 標題\`。
+- 上方工具列「新貼紙」或在畫布按右鍵建立。
+- 對話卡片可以**轉成貼紙**，也能再轉回來（右鍵）。`) },
+  ];
+  return {
+    version: 2, ui: { leftCollapsed: false }, currentKbId: kb, demoDiagram: true, tutorialLayout: true,
+    kbs: [{ id: kb, name: L('Getting Started', '使用教學'), icon: '🧭', createdAt: now, viewport: { x: 40, y: 40, z: 0.8 } }],
+    cards: Object.fromEntries(cards.map(c => [c.id, c])),
+    links: [{ id: uid('link'), kbId: kb, from: id.ask, to: id.link, color: 'red', createdAt: now }],
+    groups: [{ id: uid('grp'), kbId: kb, name: L('Navigation & shortcuts', '操作與快捷鍵'), color: 'green', members: [id.nav, id.sel, id.menu], createdAt: now }],
+  };
+}
 function seedEn() {
   const kb1 = uid('kb'), kb2 = uid('kb');
   const c1 = uid('card'), c2 = uid('card'), c3 = uid('card');
@@ -1299,6 +1466,8 @@ The cost is O(n²), so long contexts need optimisations such as FlashAttention o
   };
 }
 function seed() {
+  let demo = false; try { demo = localStorage.getItem('grok-mindmap-seed') === 'demo'; } catch {} // tests: the old System Design / ML sample
+  if (!demo) return seedTutorial();
   if (isEn()) return seedEn();
   const kb1 = uid('kb'), kb2 = uid('kb');
   const c1 = uid('card'), c2 = uid('card'), c3 = uid('card');
@@ -4087,6 +4256,12 @@ $('#btnLang').onclick = () => setLang(isEn() ? 'zh-TW' : 'en');
 applyLangPrompts();
 load(); delete state.ui.outlineW; if (state.ui.leftAuto) { state.ui.leftAuto = false; state.ui.leftCollapsed = false; } // the outline always starts closed
 $('#left').classList.toggle('collapsed', !!state.ui.leftCollapsed); pruneDrafts(null, true); applyLangDom(); renderKbList(); renderAllCards(); restoreKbUi(); save();
+// first run of the tutorial KB: lay it out with Tidy once the cards (and diagrams) have real sizes, then fit; not an undo step
+if (state.tutorialLayout) setTimeout(() => { if (!state.tutorialLayout) return; delete state.tutorialLayout; tidy(); const st = undoStacks[state.currentKbId]; if (st) { st.undo.length = 0; st.redo.length = 0; }
+  // start readable: the welcome card (oldest root) at the top left at 85%, the rest of the tour to its right
+  const root = kbCards().filter(c => !c.parentId).sort((a, b) => a.createdAt - b.createdAt)[0];
+  // (tidy ends with an animated fitView ~0.4s later; take over after it)
+  setTimeout(() => { if (root && state.cards[root.id]) { const v = vp(); v.z = 0.85; v.x = 48 - root.x * v.z; v.y = 56 - root.y * v.z; applyViewport(); drawEdges(); } save(); }, 1100); save(); }, 700);
 // thread scroll positions are part of the per-KB UI state (scroll doesn't bubble → capture phase)
 canvasEl.addEventListener('scroll', (e) => { if (e.target.classList?.contains('thread') && kbUiReady) save(); }, true);
 
