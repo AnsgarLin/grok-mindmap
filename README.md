@@ -1,3 +1,5 @@
+<p align="center"><a href="README.en.md">English</a> | <a href="README.md"><b>繁體中文</b></a></p>
+
 <p align="center">
   <img src="icons/option-8.svg" width="96" alt="心智圖知識庫 icon">
 </p>
@@ -111,6 +113,8 @@ open index.html        # Windows：start index.html；Linux：xdg-open index.htm
 │   ├── fonts/          # Playfair Display、Noto Serif TC 子集與授權
 │   └── textures/       # 畫布紋理
 ├── docs/               # README 截圖
+├── README.md           # 說明文件（繁體中文）
+├── README.en.md        # 說明文件（英文）
 └── LICENSE
 ```
 
